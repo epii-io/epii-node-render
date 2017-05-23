@@ -1,0 +1,43 @@
+{
+  "name": "epii-render",
+  "version": "0.3.0",
+  "description": "render for epii web",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sartrey/epii-node-render.git"
+  },
+  "keywords": [
+    "epii",
+    "render",
+    "react"
+  ],
+  "contributors": [
+    "Sartrey Lee <sartrey@163.com> (http://sartrey.cn/)"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sartrey/epii-node-render/issues"
+  },
+  "homepage": "https://github.com/sartrey/epii-node-render#readme",
+  "dependencies": {
+    "babel-core": "^6.24.1",
+    "babel-loader": "^7.0.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-es2017": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "chalk": "^1.1.3",
+    "expose-loader": "^0.7.3",
+    "glob": "^7.1.2",
+    "loader-utils": "^1.1.0",
+    "postcss": "^5.2.17",
+    "precss": "^1.4.0",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
+    "shelljs": "^0.7.7",
+    "webpack": "^2.6.0"
+  }
+}

@@ -1,0 +1,15 @@
+ul {
+  color: #fff;
+
+  li {
+    color: #ffe;
+
+    a {
+      color: #ffd;
+
+      &:hover {
+        color: #ffc;
+      }
+    }
+  }
+}

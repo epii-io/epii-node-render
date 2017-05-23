@@ -1,0 +1,12 @@
+.a {
+  width: 100px;
+  .b {
+    width: 120px;
+    .c {
+      width: 150px;
+    }
+    .d {
+      height: 100px;
+    }
+  }
+}
