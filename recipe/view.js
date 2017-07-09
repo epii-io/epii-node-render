@@ -4,7 +4,6 @@ const fs = require('fs')
 const path = require('path')
 const glob = require('glob')
 const webpack = require('webpack')
-
 const assist = require('../kernel/assist.js')
 const logger = require('../kernel/logger.js')
 
@@ -22,8 +21,10 @@ module.exports = function (config, context) {
   }
 
   // gen webpack config
+  var entries = getEntries(config, context)
+  if (Object.keys(entries).length === 0) return
   var webpackConfig = getWebpackConfig(config, context)
-  webpackConfig.entry = getEntries(config, context)
+  webpackConfig.entry = entries
 
   // compiler react jsx
   var compiler = webpack(webpackConfig)
@@ -189,17 +190,5 @@ function getBabelConfig(env) {
   babelrc.presets = assist.resolve(
     babelrc.presets.map(preset => 'babel-preset-' + preset))
   babelrc.plugins = babelrc.plugins || []
-  if (env === 'development') {
-    // babelrc.plugins = [
-    //   resolve('babel-plugin-react-transform'), {
-    //   transforms: [
-    //     {
-    //       transform: resolve('react-transform-hmr'),
-    //       imports: ['react'],
-    //       locals: ['module']
-    //     }
-    //   ]}
-    // ]
-  }
   return babelrc
 }

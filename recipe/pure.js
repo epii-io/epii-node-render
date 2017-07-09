@@ -4,7 +4,6 @@ const fs = require('fs')
 const path = require('path')
 const glob = require('glob')
 const webpack = require('webpack')
-
 const assist = require('../kernel/assist.js')
 const logger = require('../kernel/logger.js')
 
@@ -22,8 +21,10 @@ module.exports = function (config, context) {
   }
 
   // gen webpack config
+  var entries = getEntries(config, context)
+  if (Object.keys(entries).length === 0) return
   var webpackConfig = getWebpackConfig(config, context)
-  webpackConfig.entry = getEntries(config, context)
+  webpackConfig.entry = entries
 
   // compiler pure js
   var compiler = webpack(webpackConfig)

@@ -1,17 +1,12 @@
 'use strict'
 
 const fs = require('fs')
-const path = require('path')
 const logger = require('./logger.js')
 
 module.exports = {
-  arrayify,
   resolve,
-  watchex
-}
-
-function arrayify(o) {
-  return Array.isArray(o) ? o : [o]
+  arrayify,
+  tryWatch
 }
 
 function resolve(deps) {
@@ -19,22 +14,30 @@ function resolve(deps) {
     deps.map(p => require.resolve(p)) : require.resolve(deps)
 }
 
-function watchex(target, handle) {
+function arrayify(o) {
+  return Array.isArray(o) ? o : [o]
+}
+
+/**
+ * try to watch with custom callback
+ *
+ * @param  {String} target
+ * @param  {Function} callback
+ * @return {Object} fs.Watcher
+ */
+function tryWatch(target, callback) {
   if (!target) {
-    return logger.halt('invalid target')
+    return logger.halt('invalid watch target')
   }
-  if (!handle || typeof handle !== 'function') {
-    return logger.halt('invalid watch handler')
+  if (!callback || typeof callback !== 'function') {
+    return logger.halt('invalid watch callback')
   }
 
-  var watcher = fs.watch(
-    target,
-    { persistent: true, recursive: true},
-    (e, file) => {
-      logger.warn(`${e} ${file}`)
-      handle(file)
+  return fs.watch(
+    target, { persistent: true, recursive: true},
+    function (e, file) {
+      // todo: exact watch
+      callback(e, file)
     }
   )
-  logger.warn(`watching ${path.relative(process.cwd(), target)}`)
-  return watcher
 }

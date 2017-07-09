@@ -17,7 +17,7 @@ function genLaunchCode(name, stub) {
       var view = window.${stub}.view;
       if (!view) throw new Error('${stub} view not defined');
       ReactDOM.render(React.createElement(view), root);
-    })();
+    }());
     `.replace(/\n|(\s{2})/g, '')
   return code
 }

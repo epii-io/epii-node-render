@@ -28,7 +28,7 @@ function concatSettleCode(source) {
       };
     };
     require('react-dom');
-  })();
+  }());
   `.replace(/\n|(\s{2})/g, '')
   return source + code
 }

@@ -2,7 +2,6 @@
 
 const path = require('path')
 const shell = require('shelljs')
-
 const assist = require('./kernel/assist.js')
 const pureRecipe = require('./recipe/pure.js')
 const viewRecipe = require('./recipe/view.js')
@@ -49,12 +48,13 @@ function watchBuild(config) {
   buildOnce(config)
 
   // bind watch handler
-  assist.watchex(
+  assist.tryWatch(
     config.client,
-    function (file) {
+    function (e, file) {
       if (!file) return
       CONTEXT.entries.push(path.join(config.client, file))
-      buildOnce(config)
+      buildOnce(config, CONTEXT)
+      CONTEXT.entries = []
     }
   )
 }
