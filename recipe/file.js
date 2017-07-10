@@ -39,12 +39,12 @@ function getEntries(config, context) {
   var files = context.entries.length > 0 ?
     context.entries : glob.sync(client + '/**/index.html')
   files = files
-    .filter(function (file) { return !/node_modules/.test(file) })
-    .filter(function (file) { return !filter || !filter.test(file) })
-    .filter(function (file) { return /index\.html$/.test(file) })
+    .filter(file => !/node_modules/.test(file))
+    .filter(file => !filter || !filter.test(file))
+    .filter(file => /index\.html$/.test(file))
 
   var entries = {}
-  files.forEach(function (file) {
+  files.forEach(file => {
     var name = path.relative(client, file).slice(0, -5)
     entries[name] = file
   })

@@ -109,10 +109,7 @@ function getWebpackConfig(config, context) {
       extensions: ['.js'],
       alias: config.alias || {}
     },
-    externals: {
-      // 对于client端，config是空白
-      'config': 'var {}'
-    }
+    externals: {}
   }
 
   var babelConfig = getBabelConfig(context.env)

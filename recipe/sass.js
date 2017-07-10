@@ -50,7 +50,7 @@ function getEntries(config, context) {
     .filter(file => !filter || !filter.test(file))
     .filter(file => /index\.scss$/.test(file))
   var entries = {}
-  files.forEach(function (file) {
+  files.forEach(file => {
     var name = path.relative(client, file).slice(0, -5)
     entries[name] = file
   })

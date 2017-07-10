@@ -1,2 +1,7 @@
+.DS_Store
+npm-debug.log
 node_modules
-test/static/*
+coverage
+.nyc_output
+
+test/fixture/static/*

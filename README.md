@@ -1,4 +1,8 @@
-# epii-node-render
+# epii-render
+###### `epii-node-render`
+
+[![Build Status](https://travis-ci.org/epii-io/epii-node-render.svg?branch=master)](https://travis-ci.org/epii-io/epii-node-render)
+[![Coverage Status](https://coveralls.io/repos/github/epii-io/epii-node-render/badge.svg?branch=master)](https://coveralls.io/github/epii-io/epii-node-render?branch=master)
 
 a simple builder for React + SASS  
 

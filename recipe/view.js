@@ -54,8 +54,19 @@ module.exports = function (config, context) {
  * @param  {Object} config
  */
 function writeLaunchCode(config) {
-  var gen = require('./view-affix/launch.js')
-  var code = gen(config.holder.name, config.holder.stub)
+  var { name, stub } = config.holder
+  if (!name || !stub) {
+    throw new Error('invalid name or stub')
+  }
+  var code = `
+    ;(function () {
+      var root = document.getElementById('${name}');
+      if (!root) throw new Error('undefined ${stub} root');
+      var view = window.${stub}.entry;
+      if (!view) throw new Error('undefined ${stub} view');
+      ReactDOM.render(React.createElement(view), root);
+    }());
+  `.replace(/\n|(\s{2})/g, '')
   var output = path.join(config.static, 'launch.js')
   fs.writeFileSync(output, code, 'utf8')
   logger.done('view ::', 'launch code generated')
@@ -109,9 +120,12 @@ function getWebpackConfig(config, context) {
       rules: [
         {
           exclude: /node_modules/,
-          loader: path.join(__dirname, 'view-affix/settle.js'),
+          loader: assist.resolve('settle-loader'),
           test: /\.(es6|jsx)$/,
-          options: { holder: config.holder }
+          options: {
+            stub: config.holder.stub,
+            link: 'react-dom'
+          }
         },
         {
           exclude: /node_modules/,
@@ -128,10 +142,7 @@ function getWebpackConfig(config, context) {
       extensions: ['.js', '.jsx'],
       alias: config.alias || {}
     },
-    externals: {
-      // 对于client端，config是空白
-      'config': 'var {}'
-    }
+    externals: {}
   }
 
   var babelConfig = getBabelConfig(context.env)
@@ -148,10 +159,13 @@ function getWebpackConfig(config, context) {
   }
 
   if (!webpackConfig.externals['react']) {
-    webpackConfig.module.rules.push(
-      { loader: 'expose-loader?React', test: require.resolve('react') },
-      { loader: 'expose-loader?ReactDOM', test: require.resolve('react-dom') }
-    )
+    webpackConfig.module.rules.push({
+      test: require.resolve('react'),
+      use: [{ loader: 'expose-loader', options: 'React' }]
+    },{
+      test: require.resolve('react-dom'),
+      use: [{ loader: 'expose-loader', options: 'ReactDOM' }]
+    })
   }
 
   var processEnv = {
@@ -188,7 +202,8 @@ function getBabelConfig(env) {
     fs.readFileSync(path.join(__dirname, '../.babelrc'))
   )
   babelrc.presets = assist.resolve(
-    babelrc.presets.map(preset => 'babel-preset-' + preset))
-  babelrc.plugins = babelrc.plugins || []
+    babelrc.presets.map(preset => 'babel-preset-' + preset)
+  )
+  if (!babelrc.plugins) babelrc.plugins = []
   return babelrc
 }
