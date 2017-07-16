@@ -13,14 +13,7 @@ module.exports = function (config, context) {
     return copyFiles(config, context)
   }
 
-  if (!config.client) {
-    return logger.halt('pure ::', 'invalid config client')
-  }
-  if (!config.static) {
-    return logger.halt('pure ::', 'invalid config static')
-  }
-
-  // gen webpack config
+  // generate webpack config
   var entries = getEntries(config, context)
   if (Object.keys(entries).length === 0) return
   var webpackConfig = getWebpackConfig(config, context)
@@ -43,8 +36,8 @@ module.exports = function (config, context) {
     }
   })
   logger.warn('pure ::', 'webpack working...')
-  compiler.run(function (err, stats) {
-    if (err) console.log(err)
+  compiler.run(function (error, stats) {
+    if (error) console.log(error)
   })
 }
 
@@ -56,17 +49,17 @@ module.exports = function (config, context) {
  * @return {Object} webpack entries
  */
 function getEntries(config, context) {
-  var client = config.client.replace(/\/$/, '')
   var filter = config.filter && new RegExp(config.filter)
-  var files = context.entries.length > 0 ?
-    context.entries : glob.sync(client + '/**/index.js')
+  var files = context.entries.length > 0
+    ? context.entries
+    : glob.sync(config.$path.source.client + '/**/index.js')
   files = files
     .filter(file => !/node_modules/.test(file))
     .filter(file => !filter || !filter.test(file))
     .filter(file => /index\.js$/.test(file))
   var entries = {}
   files.forEach(file => {
-    var name = path.relative(client, file).slice(0, -3)
+    var name = path.relative(config.$path.source.client, file).slice(0, -3)
     entries[name] = file
   })
   return entries
@@ -102,7 +95,7 @@ function getWebpackConfig(config, context) {
       ]
     },
     output: {
-      path: config.static,
+      path: config.$path.target.client,
       filename: '[name].js'
     },
     resolve: {
@@ -167,17 +160,12 @@ function copyFiles(config, context) {
   var entries = getEntries(config, context)
   Object.keys(entries).forEach(name => {
     var source = entries[name]
-    var target = path.join(config.static, name + '.js')
+    var target = path.join(config.$path.target.client, name + '.js')
     fs.readFile(source, 'utf8', function (error, body) {
-      if (error) {
-        return logger.halt('pure ::', 'invalid source')
-      }
+      if (error) return logger.halt('pure ::', 'invalid source')
       fs.writeFile(target, body, 'utf8', function (error) {
-        if (error) {
-          logger.halt('pure ::', `failed to copy ${name}.js`)
-        } else {
-          logger.done('pure ::', `copy ${name}.js`)
-        }
+        if (error) return logger.halt('pure ::', `failed to copy ${name}.js`)
+        logger.done('pure ::', `copy ${name}.js`)
       })
     })
   })

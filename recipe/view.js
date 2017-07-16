@@ -8,13 +8,6 @@ const assist = require('../kernel/assist.js')
 const logger = require('../kernel/logger.js')
 
 module.exports = function (config, context) {
-  if (!config.client) {
-    return logger.halt('view ::', 'invalid config client')
-  }
-  if (!config.static) {
-    return logger.halt('view ::', 'invalid config static')
-  }
-
   // write launch code
   if (context.entries.length === 0) {
     writeLaunchCode(config)
@@ -43,8 +36,8 @@ module.exports = function (config, context) {
     }
   })
   logger.warn('view ::', 'webpack working...')
-  compiler.run(function (err, stats) {
-    if (err) console.log(err)
+  compiler.run(function (error, stats) {
+    if (error) console.log(error)
   })
 }
 
@@ -67,7 +60,7 @@ function writeLaunchCode(config) {
       ReactDOM.render(React.createElement(view), root);
     }());
   `.replace(/\n|(\s{2})/g, '')
-  var output = path.join(config.static, 'launch.js')
+  var output = path.join(config.$path.target.client, 'launch.js')
   fs.writeFileSync(output, code, 'utf8')
   logger.done('view ::', 'launch code generated')
 }
@@ -80,17 +73,17 @@ function writeLaunchCode(config) {
  * @return {Object} webpack entries
  */
 function getEntries(config, context) {
-  var client = config.client.replace(/\/$/, '')
   var filter = config.filter && new RegExp(config.filter)
-  var files = context.entries.length > 0 ?
-    context.entries : glob.sync(client + '/**/index.jsx')
+  var files = context.entries.length > 0
+    ? context.entries
+    : glob.sync(config.$path.source.client + '/**/index.jsx')
   files = files
     .filter(file => !/node_modules/.test(file))
     .filter(file => !filter || !filter.test(file))
     .filter(file => /index\.jsx$/.test(file))
   var entries = {}
   files.forEach(file => {
-    var name = path.relative(client, file).slice(0, -4)
+    var name = path.relative(config.$path.source.client, file).slice(0, -4)
     entries[name] = file
   })
   return entries
@@ -135,7 +128,7 @@ function getWebpackConfig(config, context) {
       ]
     },
     output: {
-      path: config.static,
+      path: config.$path.target.client,
       filename: '[name].js'
     },
     resolve: {

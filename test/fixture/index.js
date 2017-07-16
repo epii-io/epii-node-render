@@ -2,16 +2,23 @@ const path = require('path')
 const render = require('../../')
 
 var config1 = {
-  client: path.join(__dirname, 'client'),
-  static: path.join(__dirname, 'static/client-prod'),
-  vendor: path.join(__dirname, 'vendor'),
+  path: {
+    root: __dirname,
+    client: 'client',
+    static: 'static/client-prod',
+    vendor: 'vendor'
+  },
   filter: 'component',
   logger: true
 }
 
 var config2 = {
-  client: path.join(__dirname, 'client'),
-  static: path.join(__dirname, 'static/client-devp'),
+  path: {
+    root: __dirname,
+    client: 'client',
+    static: 'static/client-devp',
+    vendor: 'vendor'
+  },
   filter: 'component',
   holder: {
     name: 'app',

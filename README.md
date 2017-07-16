@@ -65,9 +65,12 @@ npm install --save-dev epii-render@latest
 const epiiRender = require('epii-render')
 
 const config = {
-  client: 'path-to-your-source-dir',
-  vendor: 'path-to-your-vendor-dir',
-  static: 'path-to-your-output-dir',
+  path: {
+    root: __dirname,
+    client: 'your-source-dir',
+    vendor: 'your-vendor-dir',
+    static: 'your-output-dir'
+  },
   filter: 'component', // skip client/**/component/*
   holder: {
     name: 'app', // container name, name='app' > div#app

@@ -1,6 +1,6 @@
 {
   "name": "epii-render",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "render for epii web",
   "main": "index.js",
   "scripts": {
@@ -39,7 +39,7 @@
     "react-dom": "^15.6.0",
     "settle-loader": "^0.1.0",
     "shelljs": "^0.7.7",
-    "webpack": "^3.1.0"
+    "webpack": "^3.3.0"
   },
   "devDependencies": {
     "coveralls": "^2.13.1",

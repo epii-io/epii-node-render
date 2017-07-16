@@ -8,16 +8,14 @@ const logger = require('../kernel/logger.js')
 
 module.exports = function (config, context) {
   // copy vendor
-  if (config.vendor) {
-    shell.cp('-R', config.vendor, config.static)
-    logger.info('file ::', 'copy vendor')
-  }
+  shell.cp('-R', config.$path.source.vendor, config.$path.target.static)
+  logger.info('file ::', 'copy vendor')
 
   // copy entries
   var entries = getEntries(config, context)
-  Object.keys(entries).forEach(function (entry) {
+  Object.keys(entries).forEach(entry => {
     var input = entries[entry]
-    var output = path.join(config.static, entry + '.html')
+    var output = path.join(config.$path.target.client, entry + '.html')
     shell.mkdir('-p', path.dirname(output))
     shell.cp(input, output)
     logger.info('file ::', `copy ${entry}.html`)
@@ -34,10 +32,10 @@ module.exports = function (config, context) {
  * @return {Object} entries
  */
 function getEntries(config, context) {
-  var client = config.client.replace(/\/$/, '')
   var filter = config.filter && new RegExp(config.filter)
-  var files = context.entries.length > 0 ?
-    context.entries : glob.sync(client + '/**/index.html')
+  var files = context.entries.length > 0
+    ? context.entries
+    : glob.sync(config.$path.source.client + '/**/index.html')
   files = files
     .filter(file => !/node_modules/.test(file))
     .filter(file => !filter || !filter.test(file))
@@ -45,7 +43,7 @@ function getEntries(config, context) {
 
   var entries = {}
   files.forEach(file => {
-    var name = path.relative(client, file).slice(0, -5)
+    var name = path.relative(config.$path.source.client, file).slice(0, -5)
     entries[name] = file
   })
   return entries

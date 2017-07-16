@@ -5,7 +5,7 @@ try {
   chalk = require('chalk')
 } catch (error) {}
 
-const LOGO = chalk ? 'EPII Render' : '[EPII] Render'
+const LOGO = chalk ? 'EPII Render' : '[EPII Render]'
 const TYPE = {
   info: 'blue',
   warn: 'yellow',

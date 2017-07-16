@@ -4,6 +4,7 @@ const path = require('path')
 const child_process = require('child_process')
 
 var fixtureDir = path.join(__dirname, './fixture')
+var staticDir = path.join(fixtureDir, 'static')
 var fileCache = {}
 
 function assertFile(actual, expect, config) {
@@ -42,8 +43,8 @@ describe('test', function () {
 
   describe('file recipe', function () {
     it('file must be copied', function () {
-      var path1 = path.join(fixtureDir, 'static/client-devp/1st/index.html')
-      var path2 = path.join(fixtureDir, 'static/client-prod/1st/index.html')
+      var path1 = path.join(staticDir, 'client-devp/client/1st/index.html')
+      var path2 = path.join(staticDir, 'client-prod/client/1st/index.html')
       var pathExpect = path.join(fixtureDir, 'client/1st/index.html')
       assertFile(path1, pathExpect)
       assertFile(path2, pathExpect)
@@ -52,8 +53,8 @@ describe('test', function () {
 
   describe('pure recipe', function () {
     it('compile js', function () {
-      var path1 = path.join(fixtureDir, 'static/client-devp/2nd/index.js')
-      var path2 = path.join(fixtureDir, 'static/client-prod/2nd/index.js')
+      var path1 = path.join(staticDir, 'client-devp/client/2nd/index.js')
+      var path2 = path.join(staticDir, 'client-prod/client/2nd/index.js')
       assertFile(path1, 'module a', { mode: 'fuzzy' })
       assertFile(path1, 'module b', { mode: 'fuzzy' })
       assertFile(path2, 'module a', { mode: 'fuzzy' })
@@ -63,7 +64,7 @@ describe('test', function () {
 
   describe('sass recipe', function () {
     it('compile sass', function () {
-      var path1 = path.join(fixtureDir, 'static/client-devp/index.css')
+      var path1 = path.join(staticDir, 'client-devp/client/index.css')
       assertFile(path1, '#333', { mode: 'fuzzy' })
       assertFile(path1, 'ul li a:hover', { mode: 'fuzzy' })
     })
@@ -71,8 +72,8 @@ describe('test', function () {
 
   describe('view recipe', function () {
     it('compile jsx', function () {
-      var path1 = path.join(fixtureDir, 'static/client-devp/1st/index.js')
-      var path2 = path.join(fixtureDir, 'static/client-prod/1st/index.js')
+      var path1 = path.join(staticDir, 'client-devp/client/1st/index.js')
+      var path2 = path.join(staticDir, 'client-prod/client/1st/index.js')
       assertFile(path1, '\'first react view\'', { mode: 'fuzzy' })
       assertFile(path1, '\'header\'', { mode: 'fuzzy' })
       assertFile(path1, 'settle loader', { mode: 'fuzzy' })
@@ -82,8 +83,8 @@ describe('test', function () {
     })
 
     it('launch code', function () {
-      var path1 = path.join(fixtureDir, 'static/client-devp/launch.js')
-      var path2 = path.join(fixtureDir, 'static/client-prod/launch.js')
+      var path1 = path.join(staticDir, 'client-devp/client/launch.js')
+      var path2 = path.join(staticDir, 'client-prod/client/launch.js')
       assertFile(path1, 'undefined epii view', { mode: 'fuzzy' })
       assertFile(path2, 'undefined epii view', { mode: 'fuzzy' })
     })
