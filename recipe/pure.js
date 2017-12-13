@@ -3,14 +3,24 @@
 const fs = require('fs')
 const path = require('path')
 const glob = require('glob')
+const shell = require('shelljs')
 const webpack = require('webpack')
 const assist = require('../kernel/assist.js')
 const logger = require('../kernel/logger.js')
 
 module.exports = function (config, context) {
   if (config.simple) {
-    logger.warn('pure ::', 'pass simple scripts')
-    return copyFiles(config, context)
+    // copy entries
+    var entries = getEntries(config, context)
+    Object.keys(entries).forEach(entry => {
+      var source = entries[entry]
+      var target = path.join(config.$path.target.client, entry + '.js')
+      shell.mkdir('-p', path.dirname(target))
+      shell.cp(source, target)
+      logger.info('pure ::', `copy ${entry}.js`)
+    })
+
+    return logger.warn('pure ::', 'pass simple scripts')
   }
 
   // generate webpack config
@@ -75,17 +85,6 @@ function getEntries(config, context) {
 function getWebpackConfig(config, context) {
   var webpackConfig = {
     module: {
-      // disable handling of unknown requires
-      unknownContextRegExp: /$^/,
-      unknownContextCritical: false,
-
-      // disable handling of requires with a single expression
-      exprContextRegExp: /$^/,
-      exprContextCritical: false,
-
-      // warn for every expression in require
-      wrappedContextCritical: true,
-
       rules: [
         {
           exclude: /node_modules/,
@@ -105,14 +104,14 @@ function getWebpackConfig(config, context) {
     externals: {}
   }
 
-  var babelConfig = getBabelConfig(context.env)
+  var babelConfig = assist.getBabelConfig(context.env)
   var babelLoader = webpackConfig.module.rules
     .find(rule => rule.loader && /babel/.test(rule.loader))
   babelLoader.options = babelConfig
 
   var processEnv = {
     'process.env': {
-      NODE_ENV: `"${context.env || 'production'}"`,
+      NODE_ENV: JSON.stringify(context.env || 'production'),
       IS_BROWSER: true
     }
   }
@@ -126,47 +125,9 @@ function getWebpackConfig(config, context) {
     webpackConfig.plugins = [
       new webpack.DefinePlugin(processEnv),
       new webpack.optimize.CommonsChunkPlugin({ name: 'common' }),
-      new webpack.optimize.UglifyJsPlugin({})
+      new webpack.optimize.UglifyJsPlugin({ sourceMap: false })
     ]
   }
 
   return webpackConfig
-}
-
-/**
- * get babel config
- *
- * @param  {String} env
- * @return {Object} babel config
- */
-function getBabelConfig(env) {
-  var babelrc = JSON.parse(
-    fs.readFileSync(path.join(__dirname, '../.babelrc'))
-  )
-  babelrc.presets = assist.resolve(
-    babelrc.presets.map(preset => 'babel-preset-' + preset)
-  )
-  babelrc.plugins = babelrc.plugins || []
-  return babelrc
-}
-
-/**
- * copy files
- *
- * @param  {Object} config
- * @param  {Object} context
- */
-function copyFiles(config, context) {
-  var entries = getEntries(config, context)
-  Object.keys(entries).forEach(name => {
-    var source = entries[name]
-    var target = path.join(config.$path.target.client, name + '.js')
-    fs.readFile(source, 'utf8', function (error, body) {
-      if (error) return logger.halt('pure ::', 'invalid source')
-      fs.writeFile(target, body, 'utf8', function (error) {
-        if (error) return logger.halt('pure ::', `failed to copy ${name}.js`)
-        logger.done('pure ::', `copy ${name}.js`)
-      })
-    })
-  })
 }

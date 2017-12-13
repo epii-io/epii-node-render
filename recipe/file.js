@@ -1,6 +1,5 @@
 'use strict'
 
-const fs = require('fs')
 const path = require('path')
 const glob = require('glob')
 const shell = require('shelljs')
@@ -14,10 +13,10 @@ module.exports = function (config, context) {
   // copy entries
   var entries = getEntries(config, context)
   Object.keys(entries).forEach(entry => {
-    var input = entries[entry]
-    var output = path.join(config.$path.target.client, entry + '.html')
-    shell.mkdir('-p', path.dirname(output))
-    shell.cp(input, output)
+    var source = entries[entry]
+    var target = path.join(config.$path.target.client, entry + '.html')
+    shell.mkdir('-p', path.dirname(target))
+    shell.cp(source, target)
     logger.info('file ::', `copy ${entry}.html`)
   })
 }

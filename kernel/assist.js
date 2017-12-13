@@ -1,12 +1,14 @@
 'use strict'
 
 const fs = require('fs')
+const path = require('path')
 const logger = require('./logger.js')
 
 module.exports = {
   resolve,
   arrayify,
-  tryWatch
+  tryWatch,
+  getBabelConfig
 }
 
 function resolve(deps) {
@@ -40,4 +42,20 @@ function tryWatch(target, callback) {
       callback(e, file)
     }
   )
+}
+
+/**
+ * get babel config
+ *
+ * @param  {String} env
+ * @return {Object} babel config
+ */
+function getBabelConfig(env) {
+  var babelrcPath = path.join(__dirname, '.babelrc')
+  var babelrc = JSON.parse(fs.readFileSync(babelrcPath))
+  babelrc.presets = resolve(
+    babelrc.presets.map(preset => 'babel-preset-' + preset)
+  )
+  if (!babelrc.plugins) babelrc.plugins = []
+  return babelrc
 }

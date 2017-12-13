@@ -10,8 +10,8 @@ a simple builder for React + SASS
 - PostCSS + PreCSS
 
 #### CAUTION
-`EPII render` is fit for `EPII server` because of settle + launch code.
-You can use custom container name in your own page layout.
+`EPII render` is fit for `EPII server` because of settle + launch design.
+You can use custom container name in your own page.
 Also you can use custom namespace to place model & view in `window`.
 
 ## Features
@@ -76,7 +76,7 @@ const config = {
     name: 'app', // container name, name='app' > div#app
     stub: 'epii' // variable stub, stub='epii' > window.epii.view = React view
   },
-  extern: 'react', // external react,
+  extern: 'react', // external react library (from CDN),
   simple: true, // default false, means using webpack + babel for js
   logger: true
 }

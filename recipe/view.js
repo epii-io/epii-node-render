@@ -99,17 +99,6 @@ function getEntries(config, context) {
 function getWebpackConfig(config, context) {
   var webpackConfig = {
     module: {
-      // disable handling of unknown requires
-      unknownContextRegExp: /$^/,
-      unknownContextCritical: false,
-
-      // disable handling of requires with a single expression
-      exprContextRegExp: /$^/,
-      exprContextCritical: false,
-
-      // warn for every expression in require
-      wrappedContextCritical: true,
-
       rules: [
         {
           exclude: /node_modules/,
@@ -138,7 +127,7 @@ function getWebpackConfig(config, context) {
     externals: {}
   }
 
-  var babelConfig = getBabelConfig(context.env)
+  var babelConfig = assist.getBabelConfig(context.env)
   var babelLoader = webpackConfig.module.rules
     .find(rule => rule.loader && /babel/.test(rule.loader))
   babelLoader.options = babelConfig
@@ -163,7 +152,7 @@ function getWebpackConfig(config, context) {
 
   var processEnv = {
     'process.env': {
-      NODE_ENV: `"${context.env || 'production'}"`,
+      NODE_ENV: JSON.stringify(context.env || 'production'),
       IS_BROWSER: true
     }
   }
@@ -177,26 +166,9 @@ function getWebpackConfig(config, context) {
     webpackConfig.plugins = [
       new webpack.DefinePlugin(processEnv),
       new webpack.optimize.CommonsChunkPlugin({ name: 'common' }),
-      new webpack.optimize.UglifyJsPlugin({})
+      new webpack.optimize.UglifyJsPlugin({ sourceMap: false })
     ]
   }
 
   return webpackConfig
-}
-
-/**
- * get babel config
- *
- * @param  {String} env
- * @return {Object} babel config
- */
-function getBabelConfig(env) {
-  var babelrc = JSON.parse(
-    fs.readFileSync(path.join(__dirname, '../.babelrc'))
-  )
-  babelrc.presets = assist.resolve(
-    babelrc.presets.map(preset => 'babel-preset-' + preset)
-  )
-  if (!babelrc.plugins) babelrc.plugins = []
-  return babelrc
 }
