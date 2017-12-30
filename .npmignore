@@ -1,10 +1,9 @@
+test
 tmp
 npm-debug.log
 coverage
 lcov.info
-
+.nyc_output
+.travis.yml
 .eslintignore
-.eslintrc
 .gitignore
-
-test

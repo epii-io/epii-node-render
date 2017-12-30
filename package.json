@@ -1,6 +1,6 @@
 {
   "name": "epii-render",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "description": "render for epii web",
   "main": "index.js",
   "scripts": {
@@ -30,6 +30,9 @@
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
     "chalk": "^2.3.0",
+    "eslint": "^4.14.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.8.0",
     "expose-loader": "^0.7.4",
     "glob": "^7.1.2",
     "postcss": "^6.0.14",
@@ -42,7 +45,7 @@
   },
   "devDependencies": {
     "coveralls": "^3.0.0",
-    "mocha": "^4.0.1",
-    "nyc": "^11.3.0"
+    "mocha": "^4.1.0",
+    "nyc": "^11.4.1"
   }
 }
