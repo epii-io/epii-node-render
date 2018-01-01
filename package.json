@@ -1,6 +1,6 @@
 {
   "name": "epii-render",
-  "version": "0.6.4",
+  "version": "0.6.5",
   "description": "render for epii web",
   "main": "index.js",
   "scripts": {
@@ -26,6 +26,7 @@
   "homepage": "https://github.com/sartrey/epii-node-render#readme",
   "dependencies": {
     "babel-core": "^6.26.0",
+    "babel-eslint": "^8.1.2",
     "babel-loader": "^7.1.2",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
