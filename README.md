@@ -9,30 +9,30 @@ a simple builder for React + SASS
 - Webpack + Babel + React
 - PostCSS + PreCSS
 
-#### CAUTION
-`EPII render` is fit for `EPII server` because of settle + launch design.
-You can use custom container name in your own page.
-Also you can use custom namespace to place model & view in `window`.
+`EPII render` is designed for `EPII server` project.
+You can customize view container name and `window` namespace to place model & view.
 
 ## Features
 
-### using React
-- auto insert settle code  
-- auto insert launch code
-- support simple watch
-- support extern react
+### build React views
+- compile `source/**[not assets]/*.jsx` to `target`
+- auto assign view into global namespace 
+- auto output launch script
+- optional using extern react
 
-### using other JS
-- apply babel for ES6+
-- apply webpack for require
-- or just copy to static (simple mode)
+### build other JS
+- compile `source/**[not assets]/*.js` to `target`
+- or only copy `source/**[not assets]/*.js` to `target` (simple mode)
 
-### using SASS
-- quick SASS compile
+### build SASS
+- compile `source/**[not assets]/*.scss` as SASS to `target`
 
-### copy raw file
-- auto copy vendor into static
-- auto copy other files as \*\*/index.* into static
+### build raw files
+- auto copy `source/assets/*.*` to `target/assets`
+- auto copy `source/**[not assets]/index.*[not jsx/js/scss/css]` to `target`
+
+### hot reload
+- auto watch all files changes
 
 ## Usage
 
@@ -40,19 +40,23 @@ Also you can use custom namespace to place model & view in `window`.
 
 ```sh
 (root)
-├── vendor
-└── client
-    ├── ViewA
+├── target
+└── source
+    ├── views
     │   ├── component (skip)
-    │   ├── ViewA1
+    │   ├── ViewA
+    │   │   ├── component (skip)
     │   │   ├── index.jsx
     │   │   └── index.scss
+    │   ├── ViewB
+    │   │   ├── index.js
+    │   │   └── index.html
     │   ├── index.jsx
     │   └── index.scss
-    └── ViewB
-        ├── index.js
-        ├── index.html
-        └── index.scss
+    └── assets
+        ├── image.png
+        ├── video.mp4
+        └── octet.bin
 ```
 
 ### install as dev dependency
@@ -67,18 +71,17 @@ const epiiRender = require('epii-render')
 const config = {
   path: {
     root: __dirname,
-    client: 'your-source-dir',
-    vendor: 'your-vendor-dir',
-    static: 'your-output-dir'
+    client: 'your-source-dir', // or source
+    static: 'your-target-dir', // or target
   },
   filter: 'component', // skip client/**/component/*
   holder: {
-    name: 'app', // container name, name='app' > div#app
-    stub: 'epii' // variable stub, stub='epii' > window.epii.view = React view
+    name: 'app',  // view container name, name='app' means div#app
+    stub: 'epii', // window namespace, stub='epii' means window.epii.view = React view
   },
-  extern: 'react', // external react library (from CDN),
-  simple: true, // default false, means using webpack + babel for js
-  logger: true
+  extern: 'react', // use external react library (from CDN),
+  simple: true, // default false
+  logger: true, // default true
 }
 
 // build once with production env

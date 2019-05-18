@@ -1,5 +1,5 @@
-import React, {Component} from 'react'
-import Header from './component/Header'
+import React, { Component } from 'react';
+import Header from './component/Header';
 
 export default class extends Component {
   render() {
@@ -8,6 +8,6 @@ export default class extends Component {
         <Header />
         first react view
       </div>
-    )
+    );
   }
 }

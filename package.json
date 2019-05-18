@@ -1,9 +1,10 @@
 {
   "name": "epii-render",
-  "version": "0.6.5",
+  "version": "0.7.0",
   "description": "render for epii web",
-  "main": "index.js",
+  "main": "source/index.js",
   "scripts": {
+    "play": "EPII_VERBOSE=true node start.js",
     "test": "nyc --reporter=lcov mocha test/index.js --exit",
     "lcov": "nyc report --reporter=text-lcov | coveralls"
   },
@@ -25,28 +26,34 @@
   },
   "homepage": "https://github.com/sartrey/epii-node-render#readme",
   "dependencies": {
-    "babel-core": "^6.26.0",
-    "babel-eslint": "^8.1.2",
-    "babel-loader": "^7.1.2",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-react": "^6.24.1",
-    "chalk": "^2.3.0",
-    "eslint": "^4.14.0",
+    "@babel/core": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.6",
+    "chokidar": "^2.1.6",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb": "^17.1.0",
     "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-plugin-import": "^2.8.0",
-    "expose-loader": "^0.7.4",
-    "glob": "^7.1.2",
-    "postcss": "^6.0.14",
+    "eslint-plugin-babel": "^5.3.0",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-react": "^7.13.0",
+    "expose-loader": "^0.7.5",
+    "glob": "^7.1.4",
+    "postcss": "^7.0.16",
     "precss": "^2.0.0",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
-    "settle-loader": "^0.1.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "settle-loader": "^0.2.1",
     "shelljs": "^0.7.7",
-    "webpack": "^3.10.0"
+    "webpack": "^4.31.0"
+  },
+  "optionalDependencies": {
+    "chalk": "^1.1.3"
   },
   "devDependencies": {
-    "coveralls": "^3.0.0",
-    "mocha": "^4.1.0",
-    "nyc": "^11.4.1"
+    "coveralls": "^3.0.3",
+    "mocha": "^6.1.4",
+    "nyc": "^14.1.1"
   }
 }
