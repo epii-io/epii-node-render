@@ -133,7 +133,7 @@ function watchBuild(config) {
   assist.tryWatch(
     config.$render.source.root,
     (e, file) => {
-      if (!file) return;
+      if (!file || !/\./.test(file)) return;
       if (CONTEXT.verbose) {
         logger.warn('watch event', e, file);
       }

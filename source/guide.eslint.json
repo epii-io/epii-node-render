@@ -1,0 +1,12 @@
+{
+  "extends": "airbnb",
+  "parserOptions": {
+    "ecmaVersion": 9
+  },
+  "rules": {
+    "no-var": "error",
+    "prefer-const": "error",
+    "comma-dangle": "off",
+    "import/no-dynamic-require": false
+  }
+}

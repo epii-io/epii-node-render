@@ -42,13 +42,13 @@ You can customize view container name and `window` namespace to place model & vi
 (root)
 ├── target
 └── source
-    ├── views
+    ├── scenes
     │   ├── component (skip)
-    │   ├── ViewA
+    │   ├── SceneA
     │   │   ├── component (skip)
     │   │   ├── index.jsx
     │   │   └── index.scss
-    │   ├── ViewB
+    │   ├── SceneB
     │   │   ├── index.js
     │   │   └── index.html
     │   ├── index.jsx

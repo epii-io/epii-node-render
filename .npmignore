@@ -3,6 +3,7 @@ tmp
 npm-debug.log
 coverage
 lcov.info
+.vscode
 .nyc_output
 .travis.yml
 .eslintignore
