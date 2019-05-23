@@ -6,8 +6,8 @@ export class HomePage extends Component {
       <div>
         <p>EPII Render</p>
         <p>
-          <a href="https://github.com/epii-io/epii-node-render">
-            github.com/epii-io/epii-node-render
+          <a href="https://github.com/epiijs/epii-render">
+            github.com/epiijs/epii-render
           </a>
         </p>
       </div>
