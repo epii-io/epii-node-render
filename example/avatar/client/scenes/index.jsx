@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import Euler from './component/Euler';
+import './index.scss';
 
 export class HomePage extends Component {
   render() {
@@ -10,6 +12,7 @@ export class HomePage extends Component {
             github.com/epiijs/epii-render
           </a>
         </p>
+        <Euler />
       </div>
     );
   } 

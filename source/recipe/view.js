@@ -3,6 +3,8 @@
 const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
+const precss = require('precss');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const assist = require('../kernel/assist.js');
 const logger = require('../kernel/logger.js');
 
@@ -35,10 +37,15 @@ function writeLaunchCode(config) {
 function getWebpackConfig(config, context) {
   const webpackConfig = {
     mode: context.env,
+    plugins: [
+      new MiniCssExtractPlugin({
+        moduleFilename: ({ name }) => name.replace(/jsx$/, 'css')
+      })
+    ],
     module: {
       rules: [
         {
-          exclude: /node_modules/,
+          exclude: [/node_modules/, new RegExp(config.filter)],
           loader: assist.resolve('settle-loader'),
           test: /\.jsx$/,
           options: {
@@ -50,6 +57,26 @@ function getWebpackConfig(config, context) {
           exclude: /node_modules/,
           loader: assist.resolve('babel-loader'),
           test: /\.jsx$/
+        },
+        {
+          exclude: /node_modules/,
+          test: /\.scss$/,
+          use: [
+            MiniCssExtractPlugin.loader,
+            {
+              loader: assist.resolve('css-loader'),
+              options: { importLoaders: 1 }
+            },
+            {
+              loader: assist.resolve('postcss-loader'),
+              options: {
+                ident: 'postcss',
+                plugins: () => [
+                  precss()
+                ]
+              }
+            }
+          ]
         }
       ]
     },
@@ -107,8 +134,7 @@ function getWebpackConfig(config, context) {
 function getEntries(config, context) {
   const entries = {};
   context.entries
-    .filter(file =>
-      !file.startsWith(config.$render.source.assets)
+    .filter(file => !file.startsWith(config.$render.source.assets)
       && file.endsWith('index.jsx'))
     .forEach(file => {
       const name = path.relative(config.$render.source.root, file);

@@ -5,7 +5,6 @@ const assist = require('./kernel/assist.js');
 const logger = require('./kernel/logger.js');
 const pureRecipe = require('./recipe/pure.js');
 const viewRecipe = require('./recipe/view.js');
-const sassRecipe = require('./recipe/sass.js');
 const fileRecipe = require('./recipe/file.js');
 
 const CONTEXT = {
@@ -112,7 +111,6 @@ function buildOnce(config) {
   // invoke source recipes
   pureRecipe(config, CONTEXT);
   viewRecipe(config, CONTEXT);
-  sassRecipe(config, CONTEXT);
   fileRecipe(config, CONTEXT);
 
   CONTEXT.first = false;

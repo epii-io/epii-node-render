@@ -5,5 +5,6 @@ module.exports = {
     client: 'client',
     static: 'static'
   },
+  filter: 'component',
   extern: 'react'
 };
