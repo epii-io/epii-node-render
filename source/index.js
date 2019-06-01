@@ -68,17 +68,28 @@ function lintConfig(config) {
 }
 
 /**
+ * filter entries
+ *
+ * @param  {Object} config
+ * @param  {String[]} entries
+ * @return {String[]}
+ */
+function filterEntries(config, entries) {
+  const filter = config.filter && new RegExp(config.filter);
+  return entries
+    .filter(file => !/node_modules/.test(file))
+    .filter(file => !filter || !filter.test(file));
+}
+
+/**
  * get initial entries
  *
  * @param  {Object} config
  * @return {String[]}
  */
-function getEntries(config) {
-  const filter = config.filter && new RegExp(config.filter);
+function getInitialEntries(config) {
   const globDir = `${config.$render.source.root}/**`;
-  const entries = glob.sync(globDir)
-    .filter(file => !/node_modules/.test(file))
-    .filter(file => !filter || !filter.test(file));
+  const entries = filterEntries(config, glob.sync(globDir));
   if (CONTEXT.verbose) {
     logger.info(globDir, entries);
   }
@@ -87,6 +98,7 @@ function getEntries(config) {
 
 /**
  * build once, default production
+ * todo - promisify
  */
 function buildOnce(config) {
   // verify config
@@ -105,7 +117,7 @@ function buildOnce(config) {
     shell.mkdir('-p', config.$render.target.assets);
 
     // get initial entries
-    CONTEXT.entries = getEntries(config);
+    CONTEXT.entries = getInitialEntries(config);
   }
 
   // invoke source recipes
@@ -127,20 +139,30 @@ function watchBuild(config) {
   buildOnce(config);
 
   // bind watch handler
-  // todo - build queue
   assist.tryWatch(
     config.$render.source.root,
     (e, file) => {
       if (!file || !/\./.test(file)) return;
+      const relFile = path.relative(config.$render.source.root, file);
       if (CONTEXT.verbose) {
-        logger.warn('watch event', e, file);
+        logger.warn('watch', e, relFile);
       }
-      CONTEXT.entries = [];
+      let timeout = -1;
+      clearTimeout(timeout);
       if (e === 'add' || e === 'change') {
         CONTEXT.entries.push(file);
-        buildOnce(config, CONTEXT);
+      } else {
+        // todo - remove unlink files
+        CONTEXT.entries.splice(CONTEXT.entries.indexOf(file), 1);
       }
-      // todo - support unlink
+      timeout = setTimeout(() => {
+        // todo - support reverse-discovery
+        CONTEXT.entries = filterEntries(config, CONTEXT.entries);
+        if (CONTEXT.entries.length === 0) return;
+        logger.warn(`build ${CONTEXT.entries.length} file(s) in watch queue`);
+        buildOnce(config, CONTEXT);
+        CONTEXT.entries = [];
+      }, 1000);
     }
   );
 }

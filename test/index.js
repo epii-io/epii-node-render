@@ -25,20 +25,18 @@ function assertFile(actual, expect, config) {
 }
 
 function readyToTest() {
-  var vm = require('vm');
-  vm.runInNewContext('require("./fixture/index-prod.js")', { require });
-  vm.runInNewContext('require("./fixture/index-devp.js")', { require });
+  const vm = require('vm');
   return new Promise((resolve, reject) => {
-    setTimeout(resolve, 5000)
-  })
+    vm.runInNewContext('require("./fixture/index-prod.js")', { require });
+    vm.runInNewContext('require("./fixture/index-devp.js")', { require });
+    setTimeout(resolve, 5000);
+  });
 }
 
 describe('test', function () {
-  this.timeout(30000)
+  this.timeout(30000);
 
-  before(function () {
-    return readyToTest()
-  })
+  before(readyToTest);
 
   describe('file recipe', function () {
     it('file must be copied', function () {
