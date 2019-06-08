@@ -29,7 +29,7 @@ function readyToTest() {
   return new Promise((resolve, reject) => {
     vm.runInNewContext('require("./fixture/index-prod.js")', { require });
     vm.runInNewContext('require("./fixture/index-devp.js")', { require });
-    setTimeout(resolve, 5000);
+    setTimeout(resolve, 10000);
   });
 }
 

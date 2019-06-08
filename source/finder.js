@@ -1,3 +1,4 @@
+const path = require('path');
 const glob = require('glob');
 const logger = require('./kernel/logger');
 
@@ -20,24 +21,24 @@ function getRelatedEntries(config, entries) {
   entries.forEach(inputEntry => {
     if (!includeEntry(inputEntry)) return;
     const filterStart = inputEntry.indexOf(config.filter);
+    let startDir = '';
     if (filterStart < 0) {
-      nextEntries.push(inputEntry);
+      startDir = path.dirname(inputEntry);
       if (!CONTEXT.entries.includes(inputEntry)) {
         CONTEXT.entries.push(inputEntry);
       }
     } else {
-      const startPart = inputEntry.slice(0, filterStart);
-      CONTEXT.entries.forEach((existEntry) => {
-        if (
-          existEntry.startsWith(startPart)
-          && !nextEntries.includes(existEntry)
-        ) {
-          nextEntries.push(existEntry);
-        }
-      });
+      startDir = inputEntry.slice(0, filterStart);
     }
+    CONTEXT.entries.forEach((existEntry) => {
+      if (
+        existEntry.startsWith(startDir)
+        && !nextEntries.includes(existEntry)
+      ) {
+        nextEntries.push(existEntry);
+      }
+    });
   });
-  console.log(nextEntries);
   return nextEntries;
 }
 

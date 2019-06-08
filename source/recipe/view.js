@@ -168,7 +168,7 @@ function invokeRecipe(config, context) {
   webpackConfig.entry = entries;
 
   // compiler view jsx
-  logger.warn('pure ::', 'webpack working...');
+  logger.warn('view ::', 'webpack working...');
   return new Promise((resolve, reject) => {
     const compiler = webpack(webpackConfig);
     compiler.hooks.done.tapAsync('EPII', stats => {
