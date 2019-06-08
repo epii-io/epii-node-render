@@ -30,8 +30,9 @@ You can customize view container name and `window` namespace to place model & vi
 - auto copy `source/assets/*.*` to `target/assets`
 - auto copy `source/**[not assets]/index.*[not jsx/js/scss/css]` to `target`
 
-### hot reload
+### hot build
 - auto watch all files changes
+- auto raise related files changes
 
 ## Usage
 
@@ -42,16 +43,14 @@ You can customize view container name and `window` namespace to place model & vi
 ├── target
 └── source
     ├── scenes
-    │   ├── component (skip)
+    │   ├── component (not entries)
     │   ├── SceneA
-    │   │   ├── component (skip)
+    │   │   ├── component (not entries)
     │   │   ├── index.jsx
     │   │   └── index.scss
-    │   ├── SceneB
-    │   │   ├── index.js
-    │   │   └── index.html
-    │   ├── index.jsx
-    │   └── index.scss
+    │   └── SceneB
+    │       ├── index.js
+    │       └── index.html
     └── assets
         ├── image.png
         ├── video.mp4
@@ -81,6 +80,9 @@ const config = {
   extern: 'react', // use external react library (from CDN),
   simple: true, // default false
   logger: true, // default true
+  expert: {
+    'skip-clean': false // default false
+  },
 }
 
 // build once with production env

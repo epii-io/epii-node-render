@@ -59,14 +59,6 @@ describe('test', function () {
     })
   })
 
-  describe('sass recipe', function () {
-    it('compile sass', function () {
-      var path1 = path.join(staticDir, 'client-devp/index.css')
-      assertFile(path1, '#333', { mode: 'fuzzy' })
-      assertFile(path1, 'ul li a:hover', { mode: 'fuzzy' })
-    })
-  })
-
   describe('view recipe', function () {
     it('compile jsx', function () {
       var path1 = path.join(staticDir, 'client-devp/1st/index.js')
@@ -78,6 +70,12 @@ describe('test', function () {
       assertFile(path2, '"first react view"', { mode: 'fuzzy' })
       assertFile(path2, 'settle-loader', { mode: 'fuzzy' })
       // why h1 not found?
+    })
+
+    it('compile sass', function () {
+      var path1 = path.join(staticDir, 'client-devp/index.css')
+      assertFile(path1, '#333', { mode: 'fuzzy' })
+      assertFile(path1, 'ul li a:hover', { mode: 'fuzzy' })
     })
 
     it('launch code', function () {

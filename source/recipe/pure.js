@@ -1,3 +1,5 @@
+/* global Promise */
+
 const path = require('path');
 const shell = require('shelljs');
 const webpack = require('webpack');
@@ -57,9 +59,10 @@ function getWebpackConfig(config, context) {
 function getEntries(config, context) {
   const entries = {};
   context.entries
-    .filter(file =>
-      !file.startsWith(config.$render.source.assets)
-      && file.endsWith('index.js'))
+    .filter(file => {
+      return !file.startsWith(config.$render.source.assets)
+        && file.endsWith('index.js');
+    })
     .forEach(file => {
       const name = path.relative(config.$render.source.root, file);
       entries[name] = file;
@@ -67,9 +70,19 @@ function getEntries(config, context) {
   return entries;
 }
 
-module.exports = (config, context) => {
+/**
+ * invoke build recipe
+ * for pure js
+ *
+ * @param  {Object} config
+ * @param  {Object} context
+ * @return {Promise}
+ */
+function invokeRecipe(config, context) {
   const entries = getEntries(config, context);
-  if (Object.keys(entries).length === 0) return;
+  if (Object.keys(entries).length === 0) {
+    return Promise.resolve();
+  }
 
   if (config.simple) {
     // copy entries
@@ -81,7 +94,7 @@ module.exports = (config, context) => {
       logger.info('pure ::', `copy ${entry}`);
     });
     logger.warn('pure ::', 'pass simple scripts');
-    return;
+    return Promise.resolve();
   }
 
   // generate webpack config
@@ -89,25 +102,31 @@ module.exports = (config, context) => {
   webpackConfig.entry = entries;
 
   // compiler pure js
-  const compiler = webpack(webpackConfig);
-  compiler.hooks.done.tapAsync('EPII', stats => {
-    const errors = stats.compilation.errors;
-    if (errors && errors.length && config.logger) {
-      errors.forEach(error => console.log(error.message));
-    }
-    const assets = stats.toJson({ assets: true }).assets;
-    assets.forEach(asset => {
-      // console.log(asset);
-      if (asset.emitted) {
-        logger.done(
-          'pure ::',
-          `[${asset.name}] => ${assist.toBigBytesUnit(asset.size)}`
-        );
-      } else {
-        logger.halt('pure ::', `[${asset.name}] => error`);
-      }
-    });
-  });
   logger.warn('pure ::', 'webpack working...');
-  compiler.run();
-};
+  return new Promise((resolve, reject) => {
+    const compiler = webpack(webpackConfig);
+    compiler.hooks.done.tapAsync('EPII', stats => {
+      const errors = stats.compilation.errors;
+      if (errors && errors.length && config.logger) {
+        errors.forEach(error => console.log(error.message));
+        reject(new Error('webpack error'));
+        return;
+      }
+      const assets = stats.toJson({ assets: true }).assets;
+      assets.forEach(asset => {
+        if (asset.emitted) {
+          logger.done(
+            'pure ::',
+            `[${asset.name}] => ${assist.toBigBytesUnit(asset.size)}`
+          );
+        } else {
+          logger.halt('pure ::', `[${asset.name}] => error`);
+        }
+      });
+      resolve();
+    });
+    compiler.run();
+  });
+}
+
+module.exports = invokeRecipe;

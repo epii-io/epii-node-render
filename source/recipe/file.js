@@ -12,9 +12,10 @@ const logger = require('../kernel/logger.js');
 function getEntries(config, context) {
   const entries = {};
   context.entries
-    .filter(file =>
-      !file.startsWith(config.$render.source.assets)
-      && file.endsWith('index.html'))
+    .filter(file => {
+      return !file.startsWith(config.$render.source.assets)
+        && file.endsWith('index.html');
+    })
     .forEach(file => {
       const name = path.relative(config.$render.source.root, file);
       entries[name] = file;
@@ -27,7 +28,15 @@ function getEntries(config, context) {
   return entries;
 }
 
-module.exports = (config, context) => {
+/**
+ * invoke build recipe
+ * for file
+ *
+ * @param  {Object} config
+ * @param  {Object} context
+ * @return {Promise}
+ */
+function invokeRecipe(config, context) {
   // copy entries
   const entries = getEntries(config, context);
   Object.keys(entries).forEach(name => {
@@ -44,4 +53,6 @@ module.exports = (config, context) => {
     }
     logger.info('file ::', `[${name}] copied`);
   });
-};
+}
+
+module.exports = invokeRecipe;

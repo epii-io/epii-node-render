@@ -1,15 +1,16 @@
-const glob = require('glob');
+/* global Promise */
+
 const path = require('path');
 const shell = require('shelljs');
 const assist = require('./kernel/assist.js');
 const logger = require('./kernel/logger.js');
+const finder = require('./finder.js');
 const pureRecipe = require('./recipe/pure.js');
 const viewRecipe = require('./recipe/view.js');
 const fileRecipe = require('./recipe/file.js');
 
 const CONTEXT = {
   env: 'production',
-  verbose: process.env.EPII_VERBOSE === 'true',
   first: true,
   entries: []
 };
@@ -33,9 +34,15 @@ function lintConfig(config) {
   if (!config.path.target && !config.path.static) {
     return logger.halt('null config.path.target');
   }
+  if (config.filter && typeof config.filter !== 'string') {
+    return logger.halt('config.filter can be only string');
+  }
   const newConfig = config;
   if (!config.holder) {
     newConfig.holder = { name: 'app', stub: 'epii' };
+  }
+  if (!config.expert) {
+    newConfig.expert = {};
   }
   if (!config.logger) {
     newConfig.logger = true;
@@ -61,82 +68,65 @@ function lintConfig(config) {
       assets: path.join(targetRoot, 'assets')
     }
   };
-  if (CONTEXT.verbose && CONTEXT.first) {
+  newConfig.$logger = {
+    verbose: process.env.EPII_VERBOSE === 'true'
+  };
+  if (newConfig.$logger.verbose && CONTEXT.first) {
     logger.info(config);
   }
   return newConfig;
 }
 
 /**
- * filter entries
- *
- * @param  {Object} config
- * @param  {String[]} entries
- * @return {String[]}
- */
-function filterEntries(config, entries) {
-  const filter = config.filter && new RegExp(config.filter);
-  return entries
-    .filter(file => !/node_modules/.test(file))
-    .filter(file => !filter || !filter.test(file));
-}
-
-/**
- * get initial entries
- *
- * @param  {Object} config
- * @return {String[]}
- */
-function getInitialEntries(config) {
-  const globDir = `${config.$render.source.root}/**`;
-  const entries = filterEntries(config, glob.sync(globDir));
-  if (CONTEXT.verbose) {
-    logger.info(globDir, entries);
-  }
-  return entries;
-}
-
-/**
  * build once, default production
- * todo - promisify
+ *
+ * @param  {Object} config
+ * @return {Promise}
  */
-function buildOnce(config) {
+async function buildOnce(config) {
   // verify config
-  if (!lintConfig(config)) throw new Error('invalid config');
+  if (!lintConfig(config)) {
+    throw new Error('invalid config');
+  }
 
   if (CONTEXT.first) {
     // remove target dir
-    if (config.$render.target.root.length > 5) {
+    if (
+      !config.expert['skip-clean']
+      && config.$render.target.root.length > 5
+    ) {
       shell.rm('-rf', config.$render.target.root);
     } else {
       // maybe path is / or ~ or /root
       logger.warn('target path too short to auto clean');
     }
-
     // create target dir
     shell.mkdir('-p', config.$render.target.assets);
-
     // get initial entries
-    CONTEXT.entries = getInitialEntries(config);
+    CONTEXT.entries = finder.getInitialEntries(config);
   }
 
   // invoke source recipes
-  pureRecipe(config, CONTEXT);
-  viewRecipe(config, CONTEXT);
-  fileRecipe(config, CONTEXT);
+  await Promise.all([
+    pureRecipe(config, CONTEXT),
+    viewRecipe(config, CONTEXT),
+    fileRecipe(config, CONTEXT)
+  ]);
 
+  // reset context
   CONTEXT.first = false;
+  CONTEXT.entries = [];
 }
 
 /**
  * watch & build, development
  */
-function watchBuild(config) {
+async function watchBuild(config) {
   // set development env
   CONTEXT.env = 'development';
 
   // build once immediately
-  buildOnce(config);
+  await buildOnce(config);
 
   // bind watch handler
   assist.tryWatch(
@@ -144,7 +134,7 @@ function watchBuild(config) {
     (e, file) => {
       if (!file || !/\./.test(file)) return;
       const relFile = path.relative(config.$render.source.root, file);
-      if (CONTEXT.verbose) {
+      if (config.$logger.verbose) {
         logger.warn('watch', e, relFile);
       }
       let timeout = -1;
@@ -156,12 +146,10 @@ function watchBuild(config) {
         CONTEXT.entries.splice(CONTEXT.entries.indexOf(file), 1);
       }
       timeout = setTimeout(() => {
-        // todo - support reverse-discovery
-        CONTEXT.entries = filterEntries(config, CONTEXT.entries);
+        CONTEXT.entries = finder.getRelatedEntries(config, CONTEXT.entries);
         if (CONTEXT.entries.length === 0) return;
         logger.warn(`build ${CONTEXT.entries.length} file(s) in watch queue`);
         buildOnce(config, CONTEXT);
-        CONTEXT.entries = [];
       }, 1000);
     }
   );

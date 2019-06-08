@@ -1,3 +1,4 @@
+/* global Promise */
 /* eslint-disable dot-notation */
 
 const fs = require('fs');
@@ -143,9 +144,19 @@ function getEntries(config, context) {
   return entries;
 }
 
-module.exports = (config, context) => {
+/**
+ * invoke build recipe
+ * for view jsx + scss
+ *
+ * @param  {Object} config
+ * @param  {Object} context
+ * @return {Promise}
+ */
+function invokeRecipe(config, context) {
   const entries = getEntries(config, context);
-  if (Object.keys(entries).length === 0) return;
+  if (Object.keys(entries).length === 0) {
+    return Promise.resolve();
+  }
 
   // write launch code at first build
   if (context.first) {
@@ -157,24 +168,31 @@ module.exports = (config, context) => {
   webpackConfig.entry = entries;
 
   // compiler view jsx
-  const compiler = webpack(webpackConfig);
-  compiler.hooks.done.tapAsync('EPII', stats => {
-    const errors = stats.compilation.errors;
-    if (errors && errors.length && config.logger) {
-      errors.forEach(error => console.log(error.message));
-    }
-    const assets = stats.toJson({ assets: true }).assets;
-    assets.forEach(asset => {
-      if (asset.emitted) {
-        logger.done(
-          'view ::',
-          `[${asset.name}] => ${assist.toBigBytesUnit(asset.size)}`
-        );
-      } else {
-        logger.halt('view ::', `[${asset.name}] => error`);
+  logger.warn('pure ::', 'webpack working...');
+  return new Promise((resolve, reject) => {
+    const compiler = webpack(webpackConfig);
+    compiler.hooks.done.tapAsync('EPII', stats => {
+      const errors = stats.compilation.errors;
+      if (errors && errors.length && config.logger) {
+        errors.forEach(error => console.log(error.message));
+        reject(new Error('webpack error'));
+        return;
       }
+      const assets = stats.toJson({ assets: true }).assets;
+      assets.forEach(asset => {
+        if (asset.emitted) {
+          logger.done(
+            'view ::',
+            `[${asset.name}] => ${assist.toBigBytesUnit(asset.size)}`
+          );
+        } else {
+          logger.halt('view ::', `[${asset.name}] => error`);
+        }
+      });
+      resolve();
     });
+    compiler.run();
   });
-  logger.warn('view ::', 'webpack working...');
-  compiler.run();
-};
+}
+
+module.exports = invokeRecipe;

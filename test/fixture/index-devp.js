@@ -12,7 +12,10 @@ const config = {
     stub: 'epii'
   },
   extern: 'react',
-  logger: true
+  logger: true,
+  expert: {
+    'skip-clean': true
+  }
 };
 
 render.watch(config);
