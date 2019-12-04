@@ -129,7 +129,7 @@ async function watchBuild(config) {
   await buildOnce(config);
 
   // bind watch handler
-  assist.tryWatch(
+  return assist.tryWatch(
     config.$render.source.root,
     (e, file) => {
       if (!file || !/\./.test(file)) return;

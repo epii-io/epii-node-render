@@ -25,11 +25,10 @@ function assertFile(actual, expect, config) {
 }
 
 function readyToTest() {
-  const vm = require('vm');
   return new Promise((resolve, reject) => {
-    vm.runInNewContext('require("./fixture/index-prod.js")', { require });
-    vm.runInNewContext('require("./fixture/index-devp.js")', { require });
-    setTimeout(resolve, 10000);
+    require("./fixture/index-prod.js");
+    require("./fixture/index-devp.js");  
+    setTimeout(() => resolve(), 5000);
   });
 }
 
