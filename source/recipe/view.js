@@ -104,19 +104,16 @@ function getWebpackConfig(config, context) {
     if (config.extern.indexOf('react') >= 0) {
       webpackConfig.externals['react'] = 'React';
       webpackConfig.externals['react-dom'] = 'ReactDOM';
+    } else {
+      webpackConfig.module.rules.push(
+        { test: require.resolve('react'), use: [{ loader: 'expose-loader', options: 'React' }] },
+        { test: require.resolve('react-dom'), use: [{ loader: 'expose-loader', options: 'ReactDOM' }] }
+      );
     }
-  }
-  if (!webpackConfig.externals['react']) {
-    webpackConfig.module.rules.push(
-      {
-        test: require.resolve('react'),
-        use: [{ loader: 'expose-loader', options: 'React' }]
-      },
-      {
-        test: require.resolve('react-dom'),
-        use: [{ loader: 'expose-loader', options: 'ReactDOM' }]
-      }
-    );
+    if (config.extern.indexOf('antd') >= 0) {
+      webpackConfig.externals['antd'] = 'antd';
+      webpackConfig.externals['moment'] = 'moment';
+    }
   }
 
   if (context.env === 'development') {

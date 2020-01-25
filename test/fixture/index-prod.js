@@ -7,7 +7,10 @@ const config = {
     static: 'static/client-prod'
   },
   filter: 'component',
-  logger: true
+  logger: true,
+  expert: {
+    'skip-clean': true
+  }
 };
 
 render.build(config);
