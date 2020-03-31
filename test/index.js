@@ -2,25 +2,25 @@ const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 
-var fixtureDir = path.join(__dirname, './fixture')
-var staticDir = path.join(fixtureDir, 'static')
-var fileCache = {}
+const fixtureDir = path.join(__dirname, './fixture');
+const staticDir = path.join(fixtureDir, 'static');
+const fileCache = {};
 
 function assertFile(actual, expect, config) {
-  if (!config) config = { mode: 'equal' }
-  var actualContent = fileCache[actual]
+  if (!config) config = { mode: 'equal' };
+  let actualContent = fileCache[actual];
   if (!actualContent) {
-    actualContent = fs.readFileSync(actual, 'utf8')
-    fileCache[actual]
+    actualContent = fs.readFileSync(actual, 'utf8');
+    fileCache[actual];
   }
-  var expectContent = expect
+  let expectContent = expect;
   if (config.mode === 'equal') {
-    expectContent = fs.readFileSync(expect, 'utf8')
-    assert.equal(actualContent, expectContent)
+    expectContent = fs.readFileSync(expect, 'utf8');
+    assert.equal(actualContent, expectContent);
   } else {
-    var judge = actualContent.indexOf(expectContent) >= 0
-    if (!judge) console.error(expectContent)
-    assert(judge)
+    const judge = actualContent.indexOf(expectContent) >= 0;
+    if (!judge) console.error(expectContent);
+    assert(judge);
   }
 }
 
@@ -28,7 +28,7 @@ function readyToTest() {
   return new Promise((resolve, reject) => {
     require("./fixture/index-prod.js");
     require("./fixture/index-devp.js");  
-    setTimeout(() => resolve(), 5000);
+    setTimeout(() => resolve(), 7500);
   });
 }
 
@@ -44,8 +44,8 @@ describe('test', function () {
       var pathExpect = path.join(fixtureDir, 'client/1st/index.html')
       assertFile(path1, pathExpect)
       assertFile(path2, pathExpect)
-    })
-  })
+    });
+  });
 
   describe('pure recipe', function () {
     it('compile js', function () {
@@ -55,8 +55,8 @@ describe('test', function () {
       assertFile(path1, 'module b', { mode: 'fuzzy' })
       assertFile(path2, 'module a', { mode: 'fuzzy' })
       assertFile(path2, 'module b', { mode: 'fuzzy' })
-    })
-  })
+    });
+  });
 
   describe('view recipe', function () {
     it('compile jsx', function () {
@@ -69,19 +69,19 @@ describe('test', function () {
       assertFile(path2, '"first react view"', { mode: 'fuzzy' })
       assertFile(path2, 'settle-loader', { mode: 'fuzzy' })
       // why h1 not found?
-    })
+    });
 
     it('compile sass', function () {
       var path1 = path.join(staticDir, 'client-devp/index.css')
       assertFile(path1, '#333', { mode: 'fuzzy' })
       assertFile(path1, 'ul li a:hover', { mode: 'fuzzy' })
-    })
+    });
 
     it('launch code', function () {
       var path1 = path.join(staticDir, 'client-devp/launch.js')
       var path2 = path.join(staticDir, 'client-prod/launch.js')
       assertFile(path1, 'epii view not provided', { mode: 'fuzzy' })
       assertFile(path2, 'epii view not provided', { mode: 'fuzzy' })
-    })
-  })
-})
+    });
+  });
+});
