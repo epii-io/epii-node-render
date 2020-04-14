@@ -1,6 +1,6 @@
 {
   "name": "@epiijs/render",
-  "version": "0.10.6",
+  "version": "0.10.7",
   "description": "render for epii web",
   "main": "source/index.js",
   "scripts": {

@@ -71,6 +71,11 @@ describe('test', function () {
       // why h1 not found?
     });
 
+    it('expose React', function () {
+      const path1 = path.join(staticDir, 'client-prod/index.js');
+      assertFile(path1, 'exports=t.React', { mode: 'fuzzy' });
+    });
+
     it('compile sass', function () {
       var path1 = path.join(staticDir, 'client-devp/index.css')
       assertFile(path1, '#333', { mode: 'fuzzy' })
