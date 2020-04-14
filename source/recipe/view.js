@@ -46,7 +46,7 @@ function getWebpackConfig(config, context) {
     module: {
       rules: [
         {
-          exclude: [/node_modules/, new RegExp(config.filter)],
+          exclude: [/node_modules/],
           loader: assist.resolve('settle-loader'),
           test: /\.jsx$/,
           options: {
@@ -90,6 +90,11 @@ function getWebpackConfig(config, context) {
     },
     externals: {}
   };
+
+  // try to append exclude by filter 
+  if (config.filter) {
+    webpackConfig.module.rules[0].exclude.push(new RegExp(config.filter));
+  }
 
   const babelConfig = assist.getBabelConfig(context.env);
   const babelLoader = webpackConfig.module.rules
