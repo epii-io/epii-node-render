@@ -18,4 +18,6 @@ const config = {
   }
 };
 
-render.watch(config);
+module.exports = async function main() {
+  await render.watch(config);
+};

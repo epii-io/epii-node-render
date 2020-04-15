@@ -25,11 +25,10 @@ function assertFile(actual, expect, config) {
 }
 
 function readyToTest() {
-  return new Promise((resolve, reject) => {
-    require("./fixture/index-prod.js");
-    require("./fixture/index-devp.js");  
-    setTimeout(() => resolve(), 7500);
-  });
+  return Promise.all([
+    require("./fixture/index-prod.js")(),
+    require("./fixture/index-devp.js")()
+  ]);
 }
 
 describe('test', function () {
@@ -74,6 +73,7 @@ describe('test', function () {
     it('expose React', function () {
       const path1 = path.join(staticDir, 'client-prod/index.js');
       assertFile(path1, 'exports=t.React', { mode: 'fuzzy' });
+      assertFile(path1, 'exports=t.ReactDOM', { mode: 'fuzzy' });
     });
 
     it('compile sass', function () {

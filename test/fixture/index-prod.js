@@ -13,5 +13,6 @@ const config = {
   }
 };
 
-render.build(config);
-
+module.exports = async function main() {
+  await render.build(config);
+};

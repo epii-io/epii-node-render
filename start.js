@@ -6,5 +6,8 @@ const epii = require('./source/');
 if (process.env.NODE_ENV === 'development') {
   epii.watch(require('./example/avatar/config'));
 } else {
-  epii.build(require('./example/avatar/config'));
+  epii.build(require('./example/avatar/config'))
+    .then(() => {
+      console.log('example/avatar/scenes/index.html');
+    });
 }
