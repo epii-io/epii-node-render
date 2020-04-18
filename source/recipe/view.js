@@ -47,8 +47,8 @@ function getWebpackConfig(config, context) {
       rules: [
         {
           exclude: [/node_modules/],
-          loader: assist.resolve('settle-loader'),
           test: /\.jsx$/,
+          loader: assist.resolve('settle-loader'),
           options: {
             stub: config.holder.stub,
             link: 'react-dom'
@@ -56,17 +56,31 @@ function getWebpackConfig(config, context) {
         },
         {
           exclude: /node_modules/,
+          test: /\.jsx$/,
           loader: assist.resolve('babel-loader'),
-          test: /\.jsx$/
         },
         {
           exclude: /node_modules/,
           test: /\.scss$/,
           use: [
-            MiniCssExtractPlugin.loader,
+            {
+              loader: MiniCssExtractPlugin.loader,
+              options: {
+                outputPath: config.prefix.static
+              }
+            },
             {
               loader: assist.resolve('css-loader'),
-              options: { importLoaders: 1 }
+              options: {
+                importLoaders: 1,
+                url: (url) => {
+                  if (!url.startsWith(config.prefix.static)) {
+                    logger.warn(`please use ${path.join(config.prefix.static, url)}`);
+                    logger.warn('todo - provide css-rewrite-url-loader to rewrite url');
+                  }
+                  return false;
+                }
+              }
             },
             {
               loader: assist.resolve('postcss-loader'),
@@ -76,7 +90,7 @@ function getWebpackConfig(config, context) {
                   precss()
                 ]
               }
-            }
+            },
           ]
         }
       ]

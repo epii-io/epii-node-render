@@ -21,10 +21,6 @@ function getEntries(config, context) {
       entries[name] = file;
     });
   // todo - not special assets
-  entries.assets = {
-    source: config.$render.source.assets,
-    target: config.$render.target.root
-  };
   return entries;
 }
 

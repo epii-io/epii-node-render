@@ -29,6 +29,7 @@ You can customize view container name and `window` namespace to place model & vi
 ### build raw files
 - auto copy `source/assets/*.*` to `target/assets`
 - auto copy `source/**[not assets]/index.*[not jsx/js/scss/css]` to `target`
+- auto edit assets URL by adding CDN prefix (not ready)
 
 ### hot build
 - auto watch all files changes
@@ -76,6 +77,9 @@ const config = {
   holder: {
     name: 'app',  // view container name, name='app' means div#app
     stub: 'epii', // window namespace, stub='epii' means window.epii.view = React view
+  },
+  prefix: {
+    static: '__file', // default __file, /__file/any.png = assets/any.png
   },
   extern: 'react', // use external react library (from CDN),
   simple: true, // default false

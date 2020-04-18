@@ -41,6 +41,9 @@ function lintConfig(config) {
   if (!config.holder) {
     newConfig.holder = { name: 'app', stub: 'epii' };
   }
+  if (!config.prefix) {
+    newConfig.prefix = { static: '/__file' };
+  }
   if (!config.expert) {
     newConfig.expert = {};
   }
