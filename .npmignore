@@ -1,11 +1,14 @@
+start.js
 example
 test
 tmp
 npm-debug.log
 coverage
 lcov.info
+.DS_Store
 .vscode
 .nyc_output
 .travis.yml
 .eslintignore
+.eslintrc.json
 .gitignore
