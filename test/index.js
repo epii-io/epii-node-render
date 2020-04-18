@@ -1,6 +1,7 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
+const childProcess = require('child_process');
 
 const fixtureDir = path.join(__dirname, './fixture');
 const staticDir = path.join(fixtureDir, 'static');
@@ -25,24 +26,33 @@ function assertFile(actual, expect, config) {
 }
 
 function readyToTest() {
+  childProcess.execSync(`rm -r ${path.join(__dirname, 'fixture/static')}`);
   return Promise.all([
     require("./fixture/index-prod.js")(),
     require("./fixture/index-devp.js")()
   ]);
 }
 
-describe('test', function () {
+describe('epii-render tests', function () {
   this.timeout(30000);
 
   before(readyToTest);
 
   describe('file recipe', function () {
-    it('file must be copied', function () {
-      var path1 = path.join(staticDir, 'client-devp/1st/index.html')
-      var path2 = path.join(staticDir, 'client-prod/1st/index.html')
-      var pathExpect = path.join(fixtureDir, 'client/1st/index.html')
-      assertFile(path1, pathExpect)
-      assertFile(path2, pathExpect)
+    it('index.html must be copied', function () {
+      const path1 = path.join(staticDir, 'client-devp/1st/index.html');
+      const path2 = path.join(staticDir, 'client-prod/1st/index.html');
+      const pathExpect = path.join(fixtureDir, 'client/1st/index.html');
+      assertFile(path1, pathExpect);
+      assertFile(path2, pathExpect);
+    });
+
+    it('assets must be copied', function () {
+      const path1 = path.join(staticDir, 'client-devp/assets/a.js');
+      const path2 = path.join(staticDir, 'client-prod/assets/a.js');
+      const pathExpect = path.join(fixtureDir, 'client/assets/a.js');
+      assertFile(path1, pathExpect);
+      assertFile(path2, pathExpect);
     });
   });
 

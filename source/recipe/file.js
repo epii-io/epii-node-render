@@ -12,15 +12,11 @@ const logger = require('../kernel/logger.js');
 function getEntries(config, context) {
   const entries = {};
   context.entries
-    .filter(file => {
-      return !file.startsWith(config.$render.source.assets)
-        && file.endsWith('index.html');
-    })
+    .filter(file => file.startsWith(config.$render.source.assets) || file.endsWith('index.html'))
     .forEach(file => {
       const name = path.relative(config.$render.source.root, file);
       entries[name] = file;
     });
-  // todo - not special assets
   return entries;
 }
 

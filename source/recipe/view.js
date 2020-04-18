@@ -65,9 +65,7 @@ function getWebpackConfig(config, context) {
           use: [
             {
               loader: MiniCssExtractPlugin.loader,
-              options: {
-                outputPath: config.prefix.static
-              }
+              options: {}
             },
             {
               loader: assist.resolve('css-loader'),
