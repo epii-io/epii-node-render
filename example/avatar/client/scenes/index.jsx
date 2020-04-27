@@ -6,7 +6,9 @@ export class HomePage extends Component {
   render() {
     return (
       <div>
-        <p>EPII Render</p>
+        <p className='logo'>
+          epii render
+        </p>
         <p>
           <a href="https://github.com/epiijs/epii-render">
             github.com/epiijs/epii-render

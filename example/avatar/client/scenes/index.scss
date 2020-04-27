@@ -17,3 +17,16 @@ div {
     margin: 1rem;
   }
 }
+
+.logo {
+  &:before {
+    display: block;
+    content: ' ';
+    height: 2rem;
+    background: url(epii-icon.png);
+  }
+
+  &.cdn {
+    background: url('https://epii.io/test.png');
+  }
+}

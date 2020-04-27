@@ -108,7 +108,7 @@ function invokeRecipe(config, context) {
     compiler.hooks.done.tapAsync('EPII', stats => {
       const errors = stats.compilation.errors;
       if (errors && errors.length && config.logger) {
-        errors.forEach(error => console.log(error.message));
+        errors.forEach(error => console.log(assist.hideErrorStack(error.message)));
         reject(new Error('webpack error'));
         return;
       }

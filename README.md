@@ -8,7 +8,7 @@ a simple builder for React + SASS
 - Webpack + Babel + React
 - PostCSS + PreCSS
 
-`EPII render` is designed for `EPII server` project.
+`epii render` is designed for `epii server` project.
 You can customize view container name and `window` namespace to place model & view.
 
 ## Features
@@ -26,11 +26,11 @@ You can customize view container name and `window` namespace to place model & vi
 
 ### build SASS
 - compile `source/**[not assets]/*.scss` as SASS to `target`
+- auto edit assets URL by adding file server path prefix
 
 ### build raw files
 - auto copy `source/assets/*.*` to `target/assets`
 - auto copy `source/**[not assets]/index.*[not jsx/js/scss/css]` to `target`
-- auto edit assets URL by adding CDN prefix (not ready)
 
 ### hot build
 - auto watch all files changes
@@ -57,6 +57,8 @@ You can customize view container name and `window` namespace to place model & vi
         ├── image.png
         ├── video.mp4
         └── octet.bin
+
+# do NOT place assets out of [assets] directory
 ```
 
 ### install as dev dependency
@@ -79,8 +81,8 @@ const config = {
     name: 'app',  // view container name, name='app' means div#app
     stub: 'epii', // window namespace, stub='epii' means window.epii.view = React view
   },
-  prefix: {
-    static: '__file', // default __file, /__file/any.png = assets/any.png
+  static: {
+    prefix: '__file', // assets/any.png <=> /__file/any.png
   },
   extern: 'react', // use external react library (from CDN),
   simple: true, // default false

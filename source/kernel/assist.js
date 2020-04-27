@@ -63,10 +63,17 @@ function getBabelConfig() {
   return babelrc;
 }
 
+function hideErrorStack(message) {
+  const lines = message.split(/\n\s+at\s+/);
+  if (lines.length > 0) return `\n${lines[0]}\n`;
+  return message;
+}
+
 module.exports = {
   resolve,
   arrayify,
   tryWatch,
   toBigBytesUnit,
   getBabelConfig,
+  hideErrorStack
 };

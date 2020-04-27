@@ -41,14 +41,16 @@ function lintConfig(config) {
   if (!config.holder) {
     newConfig.holder = { name: 'app', stub: 'epii' };
   }
-  if (!config.prefix) {
-    newConfig.prefix = { static: '/__file' };
-  }
   if (!config.expert) {
     newConfig.expert = {};
   }
   if (!config.logger) {
     newConfig.logger = true;
+  }
+  if (config.static && config.static.prefix) {
+    if (!/^(https?:)?\/?\//.test(config.static.prefix)) {
+      config.static.prefix = '/' + config.static.prefix;
+    }
   }
   if (config.extern) {
     newConfig.extern = assist.arrayify(config.extern);
@@ -114,7 +116,14 @@ async function buildOnce(config) {
     pureRecipe(config, CONTEXT),
     viewRecipe(config, CONTEXT),
     fileRecipe(config, CONTEXT)
-  ]);
+  ])
+    .catch(error => {
+      if (config.$logger.verbose) {
+        logger.halt(error);
+      } else {
+        logger.halt('build error');
+      }  
+    });
 
   // reset context
   CONTEXT.first = false;

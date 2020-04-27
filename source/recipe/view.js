@@ -4,7 +4,6 @@
 const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
-const precss = require('precss');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const assist = require('../kernel/assist.js');
 const logger = require('../kernel/logger.js');
@@ -73,21 +72,30 @@ function getWebpackConfig(config, context) {
               loader: assist.resolve('css-loader'),
               options: {
                 importLoaders: 1,
-                url: (url) => {
-                  if (!url.startsWith(config.prefix.static)) {
-                    logger.warn(`please use ${path.join(config.prefix.static, url)}`);
-                    logger.warn('todo - provide css-rewrite-url-loader to rewrite url');
-                  }
-                  return false;
-                }
+                url: false
               }
             },
             {
               loader: assist.resolve('postcss-loader'),
               options: {
                 ident: 'postcss',
-                plugins: () => [
-                  precss()
+                plugins: [
+                  require('precss')(),
+                  require('postcss-url')({
+                    url: asset => {
+                      // skip absolute url
+                      if (/^(https?:)?\/\//.test(asset.url)) {
+                        return asset.url;
+                      }
+                      // auto add static prefix
+                      if (config.static && config.static.prefix) {
+                        return path.join(config.static.prefix, asset.url);
+                      }
+                      // auto relative to asset
+                      const rel = path.relative(path.dirname(asset.absolutePath), config.$render.source.assets);
+                      return path.join(rel, asset.url);
+                    }
+                  })
                 ]
               }
             },
@@ -182,10 +190,10 @@ function invokeRecipe(config, context) {
   logger.warn('view ::', 'webpack working...');
   return new Promise((resolve, reject) => {
     const compiler = webpack(webpackConfig);
-    compiler.hooks.done.tapAsync('EPII', stats => {
+    compiler.hooks.done.tapAsync('epii', stats => {
       const errors = stats.compilation.errors;
       if (errors && errors.length && config.logger) {
-        errors.forEach(error => console.log(error.message));
+        errors.forEach(error => console.log(assist.hideErrorStack(error.message)));
         reject(new Error('webpack error'));
         return;
       }

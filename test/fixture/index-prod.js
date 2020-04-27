@@ -6,6 +6,9 @@ const config = {
     client: 'client',
     static: 'static/client-prod'
   },
+  static: {
+    prefix: '__file'
+  },
   filter: 'component',
   logger: true,
   expert: {

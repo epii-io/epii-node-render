@@ -20,7 +20,9 @@ function assertFile(actual, expect, config) {
     assert.equal(actualContent, expectContent);
   } else {
     const judge = actualContent.indexOf(expectContent) >= 0;
-    if (!judge) console.error(expectContent);
+    if (!judge) {
+      console.error('expect', expectContent);
+    }
     assert(judge);
   }
 }
@@ -95,6 +97,15 @@ describe('epii-render tests', function () {
       var path1 = path.join(staticDir, 'client-devp/index.css')
       assertFile(path1, '#333', { mode: 'fuzzy' })
       assertFile(path1, 'ul li a:hover', { mode: 'fuzzy' })
+    });
+
+    it('sass url prefix or relative', () => {
+      const path1 = path.join(staticDir, 'client-devp/index.css')
+      assertFile(path1, 'url(https://epii.io/test.png)', { mode: 'fuzzy' });
+      assertFile(path1, 'url(assets/test.png)', { mode: 'fuzzy' });
+      const path2 = path.join(staticDir, 'client-prod/index.css')
+      assertFile(path2, 'url(https://epii.io/test.png)', { mode: 'fuzzy' });
+      assertFile(path2, 'url(/__file/test.png)', { mode: 'fuzzy' });
     });
 
     it('launch code', function () {

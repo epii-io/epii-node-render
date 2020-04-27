@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'EPII-Avatar',
+  name: 'epii avatar',
   path: {
     root: __dirname,
     client: 'client',
