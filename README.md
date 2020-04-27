@@ -18,6 +18,7 @@ You can customize view container name and `window` namespace to place model & vi
 - auto assign view into global namespace 
 - auto output launch script
 - optional using extern react
+- root alias ~ like `import '~/sth'` instead of `import '../../sth'`
 
 ### build other JS
 - compile `source/**[not assets]/*.js` to `target`

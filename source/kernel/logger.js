@@ -6,9 +6,9 @@ try {
   console.error('chalk not installed');
 }
 
-const LOGO = chalk ? 'EPII Render' : '[EPII] Render';
+const LOGO = 'epii render';
 const TYPE = {
-  info: 'blue',
+  info: 'cyan',
   warn: 'yellow',
   halt: 'red',
   done: 'green'

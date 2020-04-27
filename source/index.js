@@ -145,13 +145,12 @@ async function watchBuild(config) {
       if (e === 'add' || e === 'change') {
         CONTEXT.entries.push(file);
       } else {
-        // todo - remove unlink files
         CONTEXT.entries.splice(CONTEXT.entries.indexOf(file), 1);
       }
       timeout = setTimeout(() => {
         CONTEXT.entries = finder.getRelatedEntries(config, CONTEXT.entries);
         if (CONTEXT.entries.length === 0) return;
-        logger.warn(`build ${CONTEXT.entries.length} file(s) in watch queue`);
+        logger.warn(`build ${CONTEXT.entries.length} file(s) in queue`);
         buildOnce(config, CONTEXT);
       }, 1000);
     }

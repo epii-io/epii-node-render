@@ -81,6 +81,11 @@ describe('epii-render tests', function () {
     });
 
     it('expose React', function () {
+      const path1 = path.join(staticDir, 'client-devp/1st/index.js');
+      assertFile(path1, 'test-guagua', { mode: 'fuzzy' });
+    });
+
+    it('resolve root', function () {
       const path1 = path.join(staticDir, 'client-prod/index.js');
       assertFile(path1, 'exports=t.React', { mode: 'fuzzy' });
       assertFile(path1, 'exports=t.ReactDOM', { mode: 'fuzzy' });

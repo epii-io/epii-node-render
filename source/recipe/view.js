@@ -36,6 +36,7 @@ function writeLaunchCode(config) {
  * @return {Object} result - webpack config
  */
 function getWebpackConfig(config, context) {
+  const babelConfig = assist.getBabelConfig(context.env);
   const webpackConfig = {
     mode: context.env,
     plugins: [
@@ -55,12 +56,13 @@ function getWebpackConfig(config, context) {
           }
         },
         {
-          exclude: /node_modules/,
+          exclude: [/node_modules/],
           test: /\.jsx$/,
           loader: assist.resolve('babel-loader'),
+          options: babelConfig
         },
         {
-          exclude: /node_modules/,
+          exclude: [/node_modules/],
           test: /\.scss$/,
           use: [
             {
@@ -98,6 +100,7 @@ function getWebpackConfig(config, context) {
       filename: (chunkData) => chunkData.chunk.name.slice(0, -1)
     },
     resolve: {
+      alias: { '~': config.$render.source.root },
       extensions: ['.js', '.jsx']
     },
     externals: {}
@@ -106,15 +109,6 @@ function getWebpackConfig(config, context) {
   // try to append exclude by filter 
   if (config.filter) {
     webpackConfig.module.rules[0].exclude.push(new RegExp(config.filter));
-  }
-
-  const babelConfig = assist.getBabelConfig(context.env);
-  const babelLoader = webpackConfig.module.rules
-    .find(rule => rule.loader && /babel/.test(rule.loader));
-  babelLoader.options = babelConfig;
-
-  if (config.$render.alias) {
-    webpackConfig.resolve.alias = config.$render.alias;
   }
 
   if (config.extern) {

@@ -3,7 +3,6 @@ const path = require('path');
 const logger = require('./logger.js');
 const chokidar = require('chokidar');
 
-const ASSETS_DIR = 'assets';
 const BYTE_UNITS = ['B', 'KB', 'MB', 'GB'];
 
 function resolve(deps) {
@@ -70,5 +69,4 @@ module.exports = {
   tryWatch,
   toBigBytesUnit,
   getBabelConfig,
-  ASSETS_DIR
 };
