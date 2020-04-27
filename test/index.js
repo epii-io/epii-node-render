@@ -26,7 +26,7 @@ function assertFile(actual, expect, config) {
 }
 
 function readyToTest() {
-  childProcess.execSync(`rm -r ${path.join(__dirname, 'fixture/static')}`);
+  childProcess.execSync(`rm -rf ${path.join(__dirname, 'fixture/static')}`);
   return Promise.all([
     require("./fixture/index-prod.js")(),
     require("./fixture/index-devp.js")()
