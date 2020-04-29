@@ -149,7 +149,6 @@ async function watchBuild(config) {
   const watcher = assist.tryWatch(
     config.$render.source.root,
     (e, file) => {
-      logger.warn('watch', e, file);
       if (!file || !/\./.test(file)) return;
       const relFile = path.relative(config.$render.source.root, file);
       if (config.$logger.verbose) {
@@ -164,7 +163,10 @@ async function watchBuild(config) {
       }
       timeout = setTimeout(() => {
         CONTEXT.entries = finder.getRelatedEntries(config, CONTEXT.entries);
-        if (CONTEXT.entries.length === 0) return;
+        if (CONTEXT.entries.length === 0) {
+          watcher.busy = false;
+          return;
+        }
         logger.warn(`build ${CONTEXT.entries.length} file(s) in queue`);
         buildOnce(config, CONTEXT).then(() => {
           watcher.busy = false;
@@ -174,6 +176,8 @@ async function watchBuild(config) {
   );
   watcher.busy = false;
   CONTEXT.watcher = watcher;
+  await new Promise(resolve => watcher.on('ready', resolve));
+  return watcher;
 }
 
 /**

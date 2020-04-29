@@ -6,3 +6,4 @@ coverage
 .vscode
 example/avatar/static/*
 test/fixture/static/*
+test/fixture/client/watch/index.jsx

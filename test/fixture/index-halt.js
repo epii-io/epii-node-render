@@ -7,7 +7,7 @@ const config2 = {
 
 module.exports = async function main() {
   await render.build(config1).catch(error => console.error(error.message));
-  render.reset();
+  await render.reset();
   await render.build(config2).catch(error => console.error(error.message));
-  render.reset();
+  await render.reset();
 };

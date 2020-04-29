@@ -29,7 +29,7 @@ const config2 = {
 
 module.exports = async function main() {
   await render.build(config1);
-  render.reset();
+  await render.reset();
   await render.build(config2);
-  render.reset();
+  await render.reset();
 };

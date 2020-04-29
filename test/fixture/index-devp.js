@@ -20,20 +20,19 @@ const config = {
   }
 };
 
-function copyFile() {
+function copyFileForWatch(watcher) {
   const source = path.join(__dirname, 'watch.jsx');
   const target = path.join(__dirname, 'client/watch/index.jsx');
-  fs.copyFileSync(source, target);
   return new Promise((resolve) => {
-    setTimeout(() => {
-      console.log('trigger watch by copy file');
-      resolve();
-    }, 3000);
+    watcher.on('all', () => {
+      setTimeout(() => resolve(), 2000);
+    });
+    fs.copyFileSync(source, target);
   });
 }
 
 module.exports = async function main() {
-  await render.watch(config);
-  await copyFile();
+  const watcher = await render.watch(config);
+  await copyFileForWatch(watcher);
   await render.reset();
 };
