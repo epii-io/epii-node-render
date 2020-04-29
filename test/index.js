@@ -86,6 +86,13 @@ describe('epii-render tests', function () {
       // why h1 not found?
     });
 
+    it('async to generator', () => {
+      const path1 = path.join(staticDir, 'client-devp/index.js');
+      const path2 = path.join(staticDir, 'client-prod/index.js');
+      assertFile(path1, '_asyncToGenerator(function*', { mode: 'fuzzy' });
+      assertFile(path2, 'function*(){this.setState', { mode: 'fuzzy' });
+    });
+
     it('expose React', function () {
       const path1 = path.join(staticDir, 'client-devp/1st/index.js');
       assertFile(path1, 'test-guagua', { mode: 'fuzzy' });

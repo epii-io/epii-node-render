@@ -1,3 +1,9 @@
 {
-  "presets": ["env", "react"]
+  "presets": [
+    ["env", { "exclude": ["transform-regenerator"] }],
+    "react"
+  ],
+  "plugins": [
+    "@babel/plugin-transform-async-to-generator"
+  ]
 }

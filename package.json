@@ -1,7 +1,7 @@
 {
   "name": "@epiijs/render",
-  "version": "0.12.1",
-  "description": "render for epii web",
+  "version": "0.13.0",
+  "description": "A typical recipe for building web application using React + SASS.",
   "main": "source/index.js",
   "scripts": {
     "play": "EPII_VERBOSE=true node example/start.js",
@@ -15,7 +15,10 @@
   "keywords": [
     "epii",
     "render",
-    "react"
+    "react",
+    "sass",
+    "web",
+    "bundler"
   ],
   "contributors": [
     "Sartrey Lee <sartrey@163.com> (https://sartrey.cn/)"
@@ -27,6 +30,7 @@
   "homepage": "https://github.com/epiijs/epii-render#readme",
   "dependencies": {
     "@babel/core": "^7.9.0",
+    "@babel/plugin-transform-async-to-generator": "^7.8.3",
     "@babel/preset-env": "^7.9.5",
     "@babel/preset-react": "^7.9.4",
     "babel-loader": "^8.1.0",

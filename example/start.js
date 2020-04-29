@@ -9,7 +9,7 @@ async function main() {
   } else {
     epii.build(require('./avatar/config'))
       .then(() => {
-        console.log('example/avatar/scenes/index.html');
+        console.log('example/avatar/static/scenes/index.html');
       });
   }
 }

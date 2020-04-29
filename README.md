@@ -55,7 +55,7 @@ Components fall into two types, page and part of page.
 - output launch script with `ReactDOM.render`
 - optionally apply external runtime like `cdn/react.js`
 - use alias `~/` for source root, e.g. `import '~/sth'` instead of `import '../sth'`
-- support new ES, such as `async/await` and `@decorator` (not ready)
+- support new ES, such as `async/await` (`@decorator` not ready)
 
 ### build other JS
 - compile `source/*.js` to `target/*.js`
@@ -80,7 +80,7 @@ Components fall into two types, page and part of page.
 npm install --save-dev @epiijs/render@latest
 ```
 
-### use api to build or watch
+### use API to build or watch
 ```js
 const epiiRender = require('@epiijs/render');
 

@@ -74,8 +74,12 @@ function isAbsoluteURL(url) {
 function getBabelConfig() {
   const babelrcPath = path.join(__dirname, '.babelrc');
   const babelrc = JSON.parse(fs.readFileSync(babelrcPath));
-  babelrc.presets = resolve(babelrc.presets.map(preset => '@babel/preset-' + preset));
-  if (!babelrc.plugins) babelrc.plugins = [];
+  babelrc.presets = babelrc.presets.map(preset => {
+    const p = resolve('@babel/preset-' + (Array.isArray(preset) ? preset[0] : preset));
+    if (Array.isArray(preset)) return [p, preset[1]];
+    return p;
+  });
+  babelrc.plugins = resolve(babelrc.plugins || []);
   return babelrc;
 }
 
