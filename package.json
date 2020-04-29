@@ -1,10 +1,10 @@
 {
   "name": "@epiijs/render",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "description": "render for epii web",
   "main": "source/index.js",
   "scripts": {
-    "play": "EPII_VERBOSE=true node start.js",
+    "play": "EPII_VERBOSE=true node example/start.js",
     "test": "nyc --reporter=lcov mocha test/index.js --exit",
     "lcov": "nyc report --reporter=text-lcov | coveralls"
   },

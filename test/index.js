@@ -27,12 +27,11 @@ function assertFile(actual, expect, config) {
   }
 }
 
-function readyToTest() {
+async function readyToTest() {
   childProcess.execSync(`rm -rf ${path.join(__dirname, 'fixture/static')}`);
-  return Promise.all([
-    require("./fixture/index-prod.js")(),
-    require("./fixture/index-devp.js")()
-  ]);
+  await require('./fixture/index-devp.js')();
+  await require('./fixture/index-prod.js')();
+  await require('./fixture/index-halt.js')();
 }
 
 describe('epii-render tests', function () {
@@ -66,6 +65,11 @@ describe('epii-render tests', function () {
       assertFile(path1, 'module b', { mode: 'fuzzy' })
       assertFile(path2, 'module a', { mode: 'fuzzy' })
       assertFile(path2, 'module b', { mode: 'fuzzy' })
+    });
+
+    it('copy js for simple', function () {
+      const path1 = path.join(staticDir, 'client-prod-2/2nd/index.js')
+      assertFile(path1, 'import moduleA', { mode: 'fuzzy' })
     });
   });
 
@@ -113,6 +117,17 @@ describe('epii-render tests', function () {
       var path2 = path.join(staticDir, 'client-prod/launch.js')
       assertFile(path1, 'epii view not provided', { mode: 'fuzzy' })
       assertFile(path2, 'epii view not provided', { mode: 'fuzzy' })
+    });
+  });
+
+  describe('watch files', () => {
+    it('watch index.jsx', () => {
+      const path1 = path.join(staticDir, 'client-devp/watch/index.js')
+      assertFile(path1, '"index view for watch test"', { mode: 'fuzzy' })
+    });
+
+    after(() => {
+      childProcess.execSync(`rm -rf ${path.join(__dirname, 'fixture/client/watch/index.jsx')}`);
     });
   });
 });

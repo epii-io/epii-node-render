@@ -23,63 +23,64 @@ const CONTEXT = {
  */
 function lintConfig(config) {
   if (!config.path) {
-    return logger.halt('null config.path');
+    return logger.halt('empty config.path');
   }
   if (!config.path.root) {
-    return logger.halt('null config.path.root');
+    return logger.halt('empty config.path.root');
   }
   if (!config.path.source && !config.path.client) {
-    return logger.halt('null config.path.source');
+    logger.warn('empty config.path.source, use "client" by default');
+    config.path.source = 'client';
   }
   if (!config.path.target && !config.path.static) {
-    return logger.halt('null config.path.target');
+    logger.warn('empty config.path.target, use "static" by default');
+    config.path.target = 'static';
   }
   if (config.filter && typeof config.filter !== 'string') {
-    return logger.halt('config.filter can be only string');
+    return logger.halt('config.filter should be only string');
   }
-  const newConfig = config;
+  if (!config.filter) {
+    logger.warn('empty config.path.filter, use "component" by default');
+    config.filter = 'component';
+  }
   if (!config.holder) {
-    newConfig.holder = { name: 'app', stub: 'epii' };
+    logger.warn('empty config.holder, use { name: "app", stub: "epii" } by default');
+    config.holder = { name: 'app', stub: 'epii' };
   }
-  if (!config.expert) {
-    newConfig.expert = {};
+  if (!config.static) {
+    config.static = {};
   }
-  if (!config.logger) {
-    newConfig.logger = true;
-  }
-  if (config.static && config.static.prefix) {
-    if (!/^(https?:)?\/?\//.test(config.static.prefix)) {
+  if (config.static.prefix) {
+    if (!assist.isAbsoluteURL(config.static.prefix)) {
+      logger.warn('config.static.prefix is relative, rewrited to absolute');
       config.static.prefix = '/' + config.static.prefix;
     }
   }
   if (config.extern) {
-    newConfig.extern = assist.arrayify(config.extern);
+    config.extern = assist.arrayify(config.extern);
   }
-  const sourceRoot = path.join(
-    config.path.root,
-    config.path.source || config.path.client || ''
-  ).replace(/\/$/, '');
-  const targetRoot = path.join(
-    config.path.root,
-    config.path.target || config.path.static || ''
-  ).replace(/\/$/, '');
-  newConfig.$render = {
+  if (!config.expert) {
+    config.expert = {};
+  }
+  const sourceDir = path.join(config.path.root, config.path.source || config.path.client).replace(/\/$/, '');
+  const targetDir = path.join(config.path.root, config.path.target || config.path.static).replace(/\/$/, '');
+  config.$render = {
     source: {
-      root: sourceRoot,
-      assets: path.join(sourceRoot, 'assets')
+      root: sourceDir,
+      assets: path.join(sourceDir, 'assets')
     },
     target: {
-      root: targetRoot,
-      assets: path.join(targetRoot, 'assets')
+      root: targetDir,
+      assets: path.join(targetDir, 'assets')
     }
   };
-  newConfig.$logger = {
+  config.$logger = {
     verbose: process.env.EPII_VERBOSE === 'true'
   };
-  if (newConfig.$logger.verbose && CONTEXT.first) {
+  if (config.$logger.verbose && CONTEXT.first) {
     logger.info(config);
   }
-  return newConfig;
+  return config;
 }
 
 /**
@@ -89,6 +90,8 @@ function lintConfig(config) {
  * @return {Promise}
  */
 async function buildOnce(config) {
+  console.log('\n');
+
   // verify config
   if (!lintConfig(config)) {
     throw new Error('invalid config');
@@ -100,6 +103,7 @@ async function buildOnce(config) {
       !config.expert['skip-clean']
       && config.$render.target.root.length > 5
     ) {
+      logger.warn(`target [${config.$render.target.root}] clean`);
       shell.rm('-rf', config.$render.target.root);
     } else {
       // maybe path is / or ~ or /root
@@ -141,15 +145,17 @@ async function watchBuild(config) {
   await buildOnce(config);
 
   // bind watch handler
-  return assist.tryWatch(
+  let timeout;
+  const watcher = assist.tryWatch(
     config.$render.source.root,
     (e, file) => {
+      logger.warn('watch', e, file);
       if (!file || !/\./.test(file)) return;
       const relFile = path.relative(config.$render.source.root, file);
       if (config.$logger.verbose) {
         logger.warn('watch', e, relFile);
       }
-      let timeout = -1;
+      watcher.busy = true;
       clearTimeout(timeout);
       if (e === 'add' || e === 'change') {
         CONTEXT.entries.push(file);
@@ -160,13 +166,32 @@ async function watchBuild(config) {
         CONTEXT.entries = finder.getRelatedEntries(config, CONTEXT.entries);
         if (CONTEXT.entries.length === 0) return;
         logger.warn(`build ${CONTEXT.entries.length} file(s) in queue`);
-        buildOnce(config, CONTEXT);
+        buildOnce(config, CONTEXT).then(() => {
+          watcher.busy = false;
+        });
       }, 1000);
     }
   );
+  watcher.busy = false;
+  CONTEXT.watcher = watcher;
+}
+
+/**
+ * reset build context
+ */
+async function resetContext() {
+  CONTEXT.env = 'production';
+  CONTEXT.first = true;
+  CONTEXT.entries = [];
+  // todo - kill watcher
+  if (CONTEXT.watcher) {
+    await assist.stopWatch(CONTEXT.watcher);
+    CONTEXT.watcher = null;
+  }
 }
 
 module.exports = {
   build: buildOnce,
-  watch: watchBuild
+  watch: watchBuild,
+  reset: resetContext
 };

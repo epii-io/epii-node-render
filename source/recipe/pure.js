@@ -6,6 +6,8 @@ const webpack = require('webpack');
 const assist = require('../kernel/assist.js');
 const logger = require('../kernel/logger.js');
 
+const logPrefix = 'pure ::';
+
 /**
  * get webpack config
  *
@@ -14,15 +16,17 @@ const logger = require('../kernel/logger.js');
  * @return {Object} result - webpack config
  */
 function getWebpackConfig(config, context) {
+  const babelConfig = assist.getBabelConfig(context.env);
   const webpackConfig = {
     mode: context.env,
     module: {
       rules: [
         {
-          exclude: /node_modules/,
+          exclude: [/node_modules/],
+          test: /\.(es6|js)$/,
           loader: assist.resolve('babel-loader'),
-          test: /\.(es6|js)$/
-        }
+          options: babelConfig
+        },
       ]
     },
     output: {
@@ -30,18 +34,10 @@ function getWebpackConfig(config, context) {
       filename: '[name]'
     },
     resolve: {
+      alias: { '~': config.$render.source.root },
       extensions: ['.js']
     }
   };
-
-  const babelConfig = assist.getBabelConfig();
-  const babelLoader = webpackConfig.module.rules
-    .find(rule => rule.loader && /babel/.test(rule.loader));
-  babelLoader.options = babelConfig;
-
-  if (config.$render.alias) {
-    webpackConfig.resolve.alias = config.$render.alias;
-  }
 
   if (context.env === 'development') {
     webpackConfig.devtool = 'source-map';
@@ -88,12 +84,12 @@ function invokeRecipe(config, context) {
     // copy entries
     Object.keys(entries).forEach(entry => {
       const source = entries[entry];
-      const target = path.join(config.$path.target.client, entry);
+      const target = path.join(config.$render.target.root, entry);
       shell.mkdir('-p', path.dirname(target));
       shell.cp(source, target);
-      logger.info('pure ::', `copy ${entry}`);
+      logger.info(logPrefix, `copy ${entry}`);
     });
-    logger.warn('pure ::', 'pass simple scripts');
+    logger.warn(logPrefix, 'pass simple scripts');
     return Promise.resolve();
   }
 
@@ -102,12 +98,12 @@ function invokeRecipe(config, context) {
   webpackConfig.entry = entries;
 
   // compiler pure js
-  logger.warn('pure ::', 'webpack working...');
+  logger.warn(logPrefix, 'webpack working...');
   return new Promise((resolve, reject) => {
     const compiler = webpack(webpackConfig);
     compiler.hooks.done.tapAsync('EPII', stats => {
       const errors = stats.compilation.errors;
-      if (errors && errors.length && config.logger) {
+      if (errors && errors.length) {
         errors.forEach(error => console.log(assist.hideErrorStack(error.message)));
         reject(new Error('webpack error'));
         return;
@@ -115,12 +111,9 @@ function invokeRecipe(config, context) {
       const assets = stats.toJson({ assets: true }).assets;
       assets.forEach(asset => {
         if (asset.emitted) {
-          logger.done(
-            'pure ::',
-            `[${asset.name}] => ${assist.toBigBytesUnit(asset.size)}`
-          );
+          logger.done(logPrefix, `[${asset.name}] => ${assist.toBigBytesUnit(asset.size)}`);
         } else {
-          logger.halt('pure ::', `[${asset.name}] => error`);
+          logger.halt(logPrefix, `[${asset.name}] => error`);
         }
       });
       resolve();

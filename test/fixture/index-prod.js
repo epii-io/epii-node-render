@@ -1,21 +1,35 @@
-const render = require('../../source/index');
+const render = require('../../source/');
 
-const config = {
+const config1 = {
   path: {
     root: __dirname,
-    client: 'client',
-    static: 'static/client-prod'
+    target: 'static/client-prod'
   },
   static: {
     prefix: '__file'
   },
-  filter: 'component',
-  logger: true,
+  expert: {
+    'skip-clean': true
+  }
+};
+
+const config2 = {
+  path: {
+    root: __dirname,
+    target: 'static/client-prod-2'
+  },
+  static: {
+    prefix: '__file'
+  },
+  simple: true,
   expert: {
     'skip-clean': true
   }
 };
 
 module.exports = async function main() {
-  await render.build(config);
+  await render.build(config1);
+  render.reset();
+  await render.build(config2);
+  render.reset();
 };

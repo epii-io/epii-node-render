@@ -8,6 +8,8 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const assist = require('../kernel/assist.js');
 const logger = require('../kernel/logger.js');
 
+const logPrefix = 'view ::';
+
 /**
  * write launch code
  *
@@ -16,7 +18,7 @@ const logger = require('../kernel/logger.js');
 function writeLaunchCode(config) {
   const { name, stub } = config.holder;
   if (!name || !stub) {
-    throw new Error('invalid name or stub');
+    throw new Error('empty name or stub');
   }
   const launchFile = path.join(__dirname, 'view.launch.txt');
   const launchCode = fs.readFileSync(launchFile, 'utf-8')
@@ -24,7 +26,7 @@ function writeLaunchCode(config) {
     .replace(/\$\{stub\}/g, stub);
   const outputPath = path.join(config.$render.target.root, 'launch.js');
   fs.writeFileSync(outputPath, launchCode, 'utf8');
-  logger.done('view ::', 'launch code written');
+  logger.done(logPrefix, 'launch code written');
 }
 
 /**
@@ -84,7 +86,7 @@ function getWebpackConfig(config, context) {
                   require('postcss-url')({
                     url: asset => {
                       // skip absolute url
-                      if (/^(https?:)?\/\//.test(asset.url)) {
+                      if (assist.isAbsoluteURL(asset.url)) {
                         return asset.url;
                       }
                       // auto add static prefix
@@ -187,12 +189,12 @@ function invokeRecipe(config, context) {
   webpackConfig.entry = entries;
 
   // compiler view jsx
-  logger.warn('view ::', 'webpack working...');
+  logger.warn(logPrefix, 'webpack working...');
   return new Promise((resolve, reject) => {
     const compiler = webpack(webpackConfig);
     compiler.hooks.done.tapAsync('epii', stats => {
       const errors = stats.compilation.errors;
-      if (errors && errors.length && config.logger) {
+      if (errors && errors.length) {
         errors.forEach(error => console.log(assist.hideErrorStack(error.message)));
         reject(new Error('webpack error'));
         return;
@@ -200,12 +202,9 @@ function invokeRecipe(config, context) {
       const assets = stats.toJson({ assets: true }).assets;
       assets.forEach(asset => {
         if (asset.emitted) {
-          logger.done(
-            'view ::',
-            `[${asset.name}] => ${assist.toBigBytesUnit(asset.size)}`
-          );
+          logger.done(logPrefix, `[${asset.name}] => ${assist.toBigBytesUnit(asset.size)}`);
         } else {
-          logger.halt('view ::', `[${asset.name}] => error`);
+          logger.halt(logPrefix, `[${asset.name}] => error`);
         }
       });
       resolve();

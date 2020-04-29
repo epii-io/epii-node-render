@@ -50,6 +50,22 @@ function tryWatch(target, callback) {
     .on('all', callback);
 }
 
+function stopWatch(watcher) {
+  return new Promise((resolve) => {
+    const timeout = setInterval(() => {
+      if (!watcher.busy) {
+        clearInterval(timeout);
+        watcher.close().then(resolve);
+      }
+      logger.warn('waiting for watcher stop ...');
+    }, 500);
+  });
+}
+
+function isAbsoluteURL(url) {
+  return /^(https?:)?\/?\//.test(url);
+}
+
 /**
  * get babel config
  *
@@ -73,7 +89,9 @@ module.exports = {
   resolve,
   arrayify,
   tryWatch,
+  stopWatch,
+  isAbsoluteURL,
   toBigBytesUnit,
   getBabelConfig,
-  hideErrorStack
+  hideErrorStack,  
 };

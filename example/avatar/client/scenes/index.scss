@@ -22,8 +22,9 @@ div {
   &:before {
     display: block;
     content: ' ';
-    height: 2rem;
-    background: url(epii-icon.png);
+    height: 75px;
+    background-image: url(epii.png);
+    background-repeat: no-repeat;
   }
 
   &.cdn {

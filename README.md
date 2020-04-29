@@ -7,7 +7,7 @@ A typical recipe for building web application using React + SASS.
 
 ## Getting Started
 
-A web application is a polymer of several components, contains one or more entry pages which are also components. `React` is an excellent well-designed component-based user interfaces library using `JSX` as language. `SASS` is a powerful style language. `React` and `SASS` is one of the most productive ways to develop modern user interfaces.
+A web application is a bundle of several components, contains one or more entry pages which are also components. `React` is an excellent well-designed component-based user interfaces library using `JSX` as language. `SASS` is a powerful style language. `React` and `SASS` is one of the most productive ways to develop modern user interfaces.
 
 `epii` is a simple convention-over-configuration web application framework. `epii render` is the build tool chain of `epii`, it can compile `React` components with `SASS` styles and other assets, output best practice product running in browser.  
 
@@ -45,7 +45,7 @@ A web application is a polymer of several components, contains one or more entry
 ```
 
 Components fall into two types, page and part of page.  
-`epii-render` can discover page components as build entries.
+`epii-render` can discover `index.jsx` as page components as build entries.
 
 ## Features
 
@@ -90,7 +90,7 @@ let config = {
     source: 'your-source-dir', // or client
     target: 'your-target-dir', // or static
   },
-  filter: 'component', // skip client/**/component/*
+  filter: 'component', // skip client/**/component/*, default 'component'
   holder: {
     name: 'app',  // page container name, 'app' means 'div#app'
     stub: 'epii', // window namespace, 'epii' means 'window.epii.entry = page'
@@ -100,7 +100,6 @@ let config = {
   },
   extern: 'react', // use external React library (from CDN)
   simple: false, // default false
-  logger: true, // default true
   expert: {
     'skip-clean': false // default false
   },
@@ -123,7 +122,3 @@ epiiRender.watch(config);
 // build & watch return promise
 // sugar for await
 ```
-
-### deploy app
-
-todo
