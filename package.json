@@ -1,6 +1,6 @@
 {
   "name": "@epiijs/render",
-  "version": "0.13.0",
+  "version": "0.13.1",
   "description": "A typical recipe for building web application using React + SASS.",
   "main": "source/index.js",
   "scripts": {
@@ -29,9 +29,9 @@
   },
   "homepage": "https://github.com/epiijs/epii-render#readme",
   "dependencies": {
-    "@babel/core": "^7.9.0",
+    "@babel/core": "^7.9.6",
     "@babel/plugin-transform-async-to-generator": "^7.8.3",
-    "@babel/preset-env": "^7.9.5",
+    "@babel/preset-env": "^7.9.6",
     "@babel/preset-react": "^7.9.4",
     "babel-loader": "^8.1.0",
     "chokidar": "^3.4.0",
@@ -46,7 +46,7 @@
     "expose-loader": "^0.7.5",
     "glob": "^7.1.4",
     "mini-css-extract-plugin": "^0.9.0",
-    "postcss": "^7.0.27",
+    "postcss": "^7.0.28",
     "postcss-loader": "^3.0.0",
     "postcss-url": "^8.0.0",
     "precss": "^4.0.0",
