@@ -100,8 +100,8 @@ describe('epii-render tests', function () {
 
     it('export React', function () {
       const path1 = path.join(staticDir, 'client-prod/index.js');
-      assertFile(path1, '___EXPOSE_LOADER_GLOBAL_THIS___["React"]', { mode: 'fuzzy' });
-      assertFile(path1, '___EXPOSE_LOADER_GLOBAL_THIS___["ReactDOM"]', { mode: 'fuzzy' });
+      assertFile(path1, 'void 0===l.React&&(l.React=r),e.exports=r', { mode: 'fuzzy' });
+      assertFile(path1, 'void 0===l.ReactDOM&&(l.ReactDOM=r),e.exports=r', { mode: 'fuzzy' });
     });
 
     it('compile sass', function () {
