@@ -67,7 +67,7 @@ Components fall into two types, page and part of page.
 
 ### build raw files
 - copy `source/assets/*.*` to `target/assets/*.*`
-- copy `source/index.html` to `target/index.html`
+- copy `source/index.(*.)html` to `target/index.(*.)html`
 
 ### hot build
 - watch all files changes and auto build

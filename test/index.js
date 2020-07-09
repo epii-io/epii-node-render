@@ -93,15 +93,15 @@ describe('epii-render tests', function () {
       assertFile(path2, 'function*(){this.setState', { mode: 'fuzzy' });
     });
 
-    it('expose React', function () {
+    it('resolve root alias', function () {
       const path1 = path.join(staticDir, 'client-devp/1st/index.js');
       assertFile(path1, 'test-guagua', { mode: 'fuzzy' });
     });
 
-    it('resolve root', function () {
+    it('export React', function () {
       const path1 = path.join(staticDir, 'client-prod/index.js');
-      assertFile(path1, 'exports=t.React', { mode: 'fuzzy' });
-      assertFile(path1, 'exports=t.ReactDOM', { mode: 'fuzzy' });
+      assertFile(path1, '___EXPOSE_LOADER_GLOBAL_THIS___["React"]', { mode: 'fuzzy' });
+      assertFile(path1, '___EXPOSE_LOADER_GLOBAL_THIS___["ReactDOM"]', { mode: 'fuzzy' });
     });
 
     it('compile sass', function () {

@@ -135,8 +135,14 @@ function getWebpackConfig(config, context) {
   // expose react if not extern react
   if (!webpackConfig.externals['react']) {
     webpackConfig.module.rules.push(
-      { test: require.resolve('react'), use: [{ loader: 'expose-loader', options: 'React' }] },
-      { test: require.resolve('react-dom'), use: [{ loader: 'expose-loader', options: 'ReactDOM' }] }
+      {
+        test: require.resolve('react'),
+        use: [{ loader: 'expose-loader', options: { exposes: 'React' } }]
+      },
+      {
+        test: require.resolve('react-dom'),
+        use: [{ loader: 'expose-loader', options: { exposes: 'ReactDOM' } }]
+      }
     );
   }
 
