@@ -6,6 +6,7 @@ docs
 test
 example
 
+.DS_Store
 .nyc_output
 .eslintignore
 .eslintrc.json

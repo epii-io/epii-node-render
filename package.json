@@ -1,6 +1,6 @@
 {
   "name": "@epiijs/render",
-  "version": "0.15.0",
+  "version": "0.15.1",
   "description": "A typical recipe for building web application using React + SASS.",
   "main": "source/index.js",
   "scripts": {
