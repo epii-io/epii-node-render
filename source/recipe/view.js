@@ -80,25 +80,26 @@ function getWebpackConfig(config, context) {
             {
               loader: assist.resolve('postcss-loader'),
               options: {
-                ident: 'postcss',
-                plugins: [
-                  require('precss')(),
-                  require('postcss-url')({
-                    url: asset => {
-                      // skip absolute url
-                      if (assist.isAbsoluteURL(asset.url)) {
-                        return asset.url;
+                postcssOptions: {
+                  plugins: [
+                    require('precss')(),
+                    require('postcss-url')({
+                      url: asset => {
+                        // skip absolute url
+                        if (assist.isAbsoluteURL(asset.url)) {
+                          return asset.url;
+                        }
+                        // auto add static prefix
+                        if (config.static && config.static.prefix) {
+                          return path.join(config.static.prefix, asset.url);
+                        }
+                        // auto relative to asset
+                        const rel = path.relative(path.dirname(asset.absolutePath), config.$render.source.assets);
+                        return path.join(rel, asset.url);
                       }
-                      // auto add static prefix
-                      if (config.static && config.static.prefix) {
-                        return path.join(config.static.prefix, asset.url);
-                      }
-                      // auto relative to asset
-                      const rel = path.relative(path.dirname(asset.absolutePath), config.$render.source.assets);
-                      return path.join(rel, asset.url);
-                    }
-                  })
-                ]
+                    })
+                  ]  
+                }
               }
             },
           ]
