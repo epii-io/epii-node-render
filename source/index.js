@@ -43,9 +43,15 @@ function lintConfig(config) {
     logger.warn('empty config.path.filter, use "component" by default');
     config.filter = 'component';
   }
-  if (!config.holder) {
-    logger.warn('empty config.holder, use { name: "app", stub: "epii" } by default');
-    config.holder = { name: 'app', stub: 'epii' };
+  if (config.holder) {
+    logger.warn('config.holder deprecated, use launch instead');
+    if (!config.launch) {
+      config.launch = { holder: config.holder.name, global: config.holder.stub };
+    }
+  }
+  if (!config.launch) {
+    logger.warn('empty config.launch, use { holder: "app", global: "epii" } by default');
+    config.launch = { holder: 'app', global: 'epii.entry' };
   }
   if (!config.static) {
     config.static = {};

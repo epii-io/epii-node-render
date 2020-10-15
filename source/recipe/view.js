@@ -1,7 +1,6 @@
 /* global Promise */
 /* eslint-disable dot-notation */
 
-const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -9,25 +8,6 @@ const assist = require('../kernel/assist.js');
 const logger = require('../kernel/logger.js');
 
 const logPrefix = 'view ::';
-
-/**
- * write launch code
- *
- * @param  {Object} config
- */
-function writeLaunchCode(config) {
-  const { name, stub } = config.holder;
-  if (!name || !stub) {
-    throw new Error('empty name or stub');
-  }
-  const launchFile = path.join(__dirname, 'view.launch.txt');
-  const launchCode = fs.readFileSync(launchFile, 'utf-8')
-    .replace(/\$\{name\}/g, name)
-    .replace(/\$\{stub\}/g, stub);
-  const outputPath = path.join(config.$render.target.root, 'launch.js');
-  fs.writeFileSync(outputPath, launchCode, 'utf8');
-  logger.done(logPrefix, 'launch code written');
-}
 
 /**
  * get webpack config
@@ -42,7 +22,7 @@ function getWebpackConfig(config, context) {
     mode: context.env,
     plugins: [
       new MiniCssExtractPlugin({
-        moduleFilename: ({ name }) => name.replace(/jsx$/, 'css')
+        filename: (pathData) => pathData.chunk.name.replace('.jsx', '.css')
       })
     ],
     module: {
@@ -50,17 +30,14 @@ function getWebpackConfig(config, context) {
         {
           exclude: [/node_modules/],
           test: /\.jsx$/,
-          loader: assist.resolve('settle-loader'),
-          options: {
-            stub: config.holder.stub,
-            link: 'react-dom'
-          }
+          loader: assist.resolve('babel-loader'),
+          options: babelConfig
         },
         {
           exclude: [/node_modules/],
-          test: /\.jsx$/,
-          loader: assist.resolve('babel-loader'),
-          options: babelConfig
+          test: /index\.jsx$/,
+          loader: assist.resolve('launch-loader'),
+          options: config.launch
         },
         {
           exclude: [/node_modules/],
@@ -119,9 +96,10 @@ function getWebpackConfig(config, context) {
 
   // try to append exclude by filter 
   if (config.filter) {
-    webpackConfig.module.rules[0].exclude.push(new RegExp(config.filter));
+    webpackConfig.module.rules[1].exclude.push(new RegExp(config.filter));
   }
 
+  // using external library
   if (config.extern) {
     if (config.extern.indexOf('react') >= 0) {
       webpackConfig.externals['react'] = 'React';
@@ -133,20 +111,7 @@ function getWebpackConfig(config, context) {
     }
   }
 
-  // expose react if not extern react
-  if (!webpackConfig.externals['react']) {
-    webpackConfig.module.rules.push(
-      {
-        test: require.resolve('react'),
-        use: [{ loader: 'expose-loader', options: { exposes: 'React' } }]
-      },
-      {
-        test: require.resolve('react-dom'),
-        use: [{ loader: 'expose-loader', options: { exposes: 'ReactDOM' } }]
-      }
-    );
-  }
-
+  // configure devtool
   if (context.env === 'development') {
     webpackConfig.devtool = 'source-map';
   }
@@ -184,11 +149,6 @@ function invokeRecipe(config, context) {
   const entries = getEntries(config, context);
   if (Object.keys(entries).length === 0) {
     return Promise.resolve();
-  }
-
-  // write launch code at first build
-  if (context.first) {
-    writeLaunchCode(config);
   }
 
   // generate webpack config

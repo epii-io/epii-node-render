@@ -1,5 +1,3 @@
-const fs = require('fs');
-const path = require('path');
 const logger = require('./logger.js');
 const chokidar = require('chokidar');
 
@@ -72,15 +70,18 @@ function isAbsoluteURL(url) {
  * @return {Object} babel config
  */
 function getBabelConfig() {
-  const babelrcPath = path.join(__dirname, '.babelrc');
-  const babelrc = JSON.parse(fs.readFileSync(babelrcPath));
-  babelrc.presets = babelrc.presets.map(preset => {
-    const p = resolve('@babel/preset-' + (Array.isArray(preset) ? preset[0] : preset));
-    if (Array.isArray(preset)) return [p, preset[1]];
-    return p;
-  });
-  babelrc.plugins = resolve(babelrc.plugins || []);
-  return babelrc;
+  return {
+    presets: [
+      [
+        resolve('@babel/preset-env'),
+        { exclude: ['@babel/plugin-transform-regenerator'] }
+      ],
+      resolve('@babel/preset-react')
+    ],
+    plugins: [
+      resolve('@babel/plugin-transform-async-to-generator')
+    ]
+  };
 }
 
 function hideErrorStack(message) {

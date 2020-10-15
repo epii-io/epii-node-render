@@ -7,9 +7,9 @@ A typical recipe for building web application using React + SASS.
 
 ## Getting Started
 
-A web application is a bundle of several components, contains one or more entry pages which are also components. `React` is an excellent well-designed component-based user interfaces library using `JSX` as language. `SASS` is a powerful style language. `React` and `SASS` is one of the most productive ways to develop modern user interfaces.
+A web application is a bundle of several components, contains one or more entry pages which are also components. `React` is an excellent well-designed component-based user interfaces library using `JSX` language. `SASS` is a powerful style language. Using `React` and `SASS` may be one of the most productive ways to develop modern web application.
 
-`epii` is a simple convention-over-configuration web application framework. `epii render` is the build tool chain of `epii`, it can compile `React` components with `SASS` styles and other assets, output best practice product running in browser.  
+`epii` is a simple convention-over-configuration web application framework. `epii render` is the build tool of `epii`, it can compile `React` components with `SASS` styles and other assets, output best practice static files running in browser.  
 
 ## Convention
 
@@ -45,7 +45,29 @@ A web application is a bundle of several components, contains one or more entry 
 ```
 
 Components fall into two types, page and part of page.  
-`epii-render` can discover `index.jsx` as page components as build entries.
+`epii-render` will discover `index.jsx` as page components to build.
+
+### how to run output
+
+You can create a shell HTML like the following one.
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+  </head>
+  <body>
+    <div id="your-holder-name"></div>
+    <!-- use CDN library to reduce load time -->
+    <script src="react.js"></script>
+    <script src="react-dom.js"></script>
+    <!-- load output -->
+    <script src="index.js"></script>
+  </body>
+</html>
+```
+
+Then open browser and visit the HTML. Also you can host these output files on cloud servers.
 
 ## Features
 
@@ -91,9 +113,9 @@ let config = {
     target: 'your-target-dir', // or static
   },
   filter: 'component', // skip client/**/component/*, default 'component'
-  holder: {
-    name: 'app',  // page container name, 'app' means 'div#app'
-    stub: 'epii', // window namespace, 'epii' means 'window.epii.entry = page'
+  launch: {
+    holder: 'app',  // holder container, 'app' means 'div#app'
+    global: 'epii.entry', // global namespace, 'epii.entry' means 'window.epii.entry = page'
   },
   static: {
     prefix: '__file', // target/assets/any.png <=> /__file/any.png

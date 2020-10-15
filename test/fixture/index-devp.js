@@ -11,7 +11,7 @@ const config = {
   filter: 'component',
   holder: {
     name: 'app',
-    stub: 'epii'
+    stub: 'epii.entry'
   },
   extern: 'react',
   logger: true,

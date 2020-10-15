@@ -79,10 +79,13 @@ describe('epii-render tests', function () {
       var path2 = path.join(staticDir, 'client-prod/1st/index.js')
       assertFile(path1, '"first react view"', { mode: 'fuzzy' })
       assertFile(path1, '"header"', { mode: 'fuzzy' })
-      assertFile(path1, 'settle-loader', { mode: 'fuzzy' })
-      assertFile(path2, 'react.production.min.js', { mode: 'fuzzy' })
+      // test for react.production.min.js
+      assertFile(path2, 'Symbol.for("react.context")', { mode: 'fuzzy' })
+      // test for index.jsx
       assertFile(path2, '"first react view"', { mode: 'fuzzy' })
-      assertFile(path2, 'settle-loader', { mode: 'fuzzy' })
+      // test for launch-loader
+      assertFile(path1, 'throw new Error(\'holder', { mode: 'fuzzy' })
+      assertFile(path2, 'throw new Error(\"holder', { mode: 'fuzzy' })
       // why h1 not found?
     });
 
@@ -98,10 +101,8 @@ describe('epii-render tests', function () {
       assertFile(path1, 'test-guagua', { mode: 'fuzzy' });
     });
 
-    it('export React', function () {
-      const path1 = path.join(staticDir, 'client-prod/index.js');
-      assertFile(path1, 'void 0===l.React&&(l.React=r),e.exports=r', { mode: 'fuzzy' });
-      assertFile(path1, 'void 0===l.ReactDOM&&(l.ReactDOM=r),e.exports=r', { mode: 'fuzzy' });
+    it('expose react to window', function () {
+      // TODO - how to test this?
     });
 
     it('compile sass', function () {
@@ -117,13 +118,6 @@ describe('epii-render tests', function () {
       const path2 = path.join(staticDir, 'client-prod/index.css')
       assertFile(path2, 'url(https://epii.io/test.png)', { mode: 'fuzzy' });
       assertFile(path2, 'url(/__file/test.png)', { mode: 'fuzzy' });
-    });
-
-    it('launch code', function () {
-      var path1 = path.join(staticDir, 'client-devp/launch.js')
-      var path2 = path.join(staticDir, 'client-prod/launch.js')
-      assertFile(path1, 'epii view not provided', { mode: 'fuzzy' })
-      assertFile(path2, 'epii view not provided', { mode: 'fuzzy' })
     });
   });
 
