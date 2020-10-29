@@ -80,7 +80,7 @@ describe('epii-render tests', function () {
       assertFile(path1, '"first react view"', { mode: 'fuzzy' })
       assertFile(path1, '"header"', { mode: 'fuzzy' })
       // test for react.production.min.js
-      assertFile(path2, 'Symbol.for("react.context")', { mode: 'fuzzy' })
+      assertFile(path2, '_calculateChangedBits', { mode: 'fuzzy' })
       // test for index.jsx
       assertFile(path2, '"first react view"', { mode: 'fuzzy' })
       // test for launch-loader
