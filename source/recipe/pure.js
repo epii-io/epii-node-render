@@ -104,7 +104,9 @@ function invokeRecipe(config, context) {
     compiler.hooks.done.tapAsync('epii', stats => {
       const errors = stats.compilation.errors;
       if (errors && errors.length) {
-        errors.forEach(error => console.log(assist.hideErrorStack(error.message)));
+        errors.forEach(error => {
+          console.log(assist.hideErrorStack(error.message));
+        });
         reject(new Error('webpack error'));
         return;
       }
@@ -112,9 +114,8 @@ function invokeRecipe(config, context) {
       assets.forEach(asset => {
         if (asset.emitted) {
           logger.done(logPrefix, `[${asset.name}] => ${assist.toBigBytesUnit(asset.size)}`);
-        } else {
-          logger.halt(logPrefix, `[${asset.name}] => error`);
         }
+        // what about else ?
       });
       resolve();
     });

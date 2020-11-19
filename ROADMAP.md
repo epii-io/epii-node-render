@@ -10,6 +10,6 @@
 
 ## Milestone 1
 1. app shell render
-2. sprites optimize
+2. sprites bundle
 3. zero configuration
 4. add hash for output
