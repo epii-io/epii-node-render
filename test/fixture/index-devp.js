@@ -9,9 +9,9 @@ const config = {
     target: 'static/client-devp'
   },
   filter: 'component',
-  holder: {
-    name: 'app',
-    stub: 'epii.entry'
+  launch: {
+    holder: 'app',
+    global: 'epii.entry'
   },
   extern: 'react',
   logger: true,
@@ -32,7 +32,7 @@ function copyFileForWatch(watcher) {
 }
 
 module.exports = async function main() {
-  const watcher = await render.watch(config);
+  const watcher = await render.watchBuild(config);
   await copyFileForWatch(watcher);
-  await render.reset();
+  await render.resetContext();
 };

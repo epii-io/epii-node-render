@@ -1,6 +1,6 @@
 # Render Roadmap
 
-## Milestone 0
+## MS 0 (done)
 1. webpack + babel (for React)
 2. postcss + precss (for SASS)
 3. less configuration
@@ -8,7 +8,7 @@
 5. support hot build
 6. test for all features
 
-## Milestone 1
+## MS 1
 1. app shell render
 2. sprites bundle
 3. zero configuration

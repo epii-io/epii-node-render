@@ -1,13 +1,13 @@
 /* eslint-disable global-require */
 
-const epii = require('../source');
+const epiiRender = require('../source');
 
 async function main() {
   // http://localhost:port/views/index.html
   if (process.env.NODE_ENV === 'development') {
-    epii.watch(require('./avatar/config'));
+    epiiRender.watchBuild(require('./avatar/config'));
   } else {
-    epii.build(require('./avatar/config'))
+    epiiRender.buildOnce(require('./avatar/config'))
       .then(() => {
         console.log('example/avatar/static/scenes/index.html');
       });

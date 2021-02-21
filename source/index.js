@@ -43,12 +43,6 @@ function lintConfig(config) {
     logger.warn('empty config.path.filter, use "component" by default');
     config.filter = 'component';
   }
-  if (config.holder) {
-    logger.warn('config.holder deprecated, use launch instead');
-    if (!config.launch) {
-      config.launch = { holder: config.holder.name, global: config.holder.stub };
-    }
-  }
   if (!config.launch) {
     logger.warn('empty config.launch, use { holder: "app", global: "epii" } by default');
     config.launch = { holder: 'app', global: 'epii.entry' };
@@ -193,7 +187,6 @@ async function resetContext() {
   CONTEXT.env = 'production';
   CONTEXT.first = true;
   CONTEXT.entries = [];
-  // todo - kill watcher
   if (CONTEXT.watcher) {
     await assist.stopWatch(CONTEXT.watcher);
     CONTEXT.watcher = null;
@@ -201,7 +194,7 @@ async function resetContext() {
 }
 
 module.exports = {
-  build: buildOnce,
-  watch: watchBuild,
-  reset: resetContext
+  buildOnce,
+  watchBuild,
+  resetContext,
 };

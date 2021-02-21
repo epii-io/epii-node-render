@@ -28,8 +28,8 @@ const config2 = {
 };
 
 module.exports = async function main() {
-  await render.build(config1);
-  await render.reset();
-  await render.build(config2);
-  await render.reset();
+  await render.buildOnce(config1);
+  await render.resetContext();
+  await render.buildOnce(config2);
+  await render.resetContext();
 };

@@ -136,11 +136,12 @@ config = {
 };
 
 // build once with production env
-epiiRender.build(config);
+epiiRender.buildOnce(config).then(() => {
+  console.log('buildOnce done');
+});
 
 // build & watch with development env
-epiiRender.watch(config);
-
-// build & watch return promise
-// sugar for await
+epiiRender.watchBuild(config).then((watcher) => {
+  console.log('buildOnce done', 'return watcher', watcher);
+});
 ```
