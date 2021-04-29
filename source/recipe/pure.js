@@ -5,6 +5,7 @@ const shell = require('shelljs');
 const webpack = require('webpack');
 const assist = require('../kernel/assist.js');
 const logger = require('../kernel/logger.js');
+const preset = require('../kernel/preset.js');
 
 const logPrefix = 'pure ::';
 
@@ -16,7 +17,6 @@ const logPrefix = 'pure ::';
  * @return {Object} result - webpack config
  */
 function getWebpackConfig(config, context) {
-  const babelConfig = assist.getBabelConfig(context.env);
   const webpackConfig = {
     mode: context.env,
     module: {
@@ -25,17 +25,17 @@ function getWebpackConfig(config, context) {
           exclude: [/node_modules/],
           test: /\.(es6|js)$/,
           loader: assist.resolve('babel-loader'),
-          options: babelConfig
+          options: preset.getBabelConfig(context.env),
         },
       ]
     },
     output: {
       path: config.$render.target.root,
-      filename: '[name]'
+      filename: '[name]',
     },
     resolve: {
       alias: { '~': config.$render.source.root },
-      extensions: ['.js']
+      extensions: ['.js'],
     }
   };
 
@@ -55,10 +55,7 @@ function getWebpackConfig(config, context) {
 function getEntries(config, context) {
   const entries = {};
   context.entries
-    .filter(file => {
-      return !file.startsWith(config.$render.source.assets)
-        && file.endsWith('index.js');
-    })
+    .filter(file => !file.startsWith(config.$render.source.assets) && file.endsWith('index.js'))
     .forEach(file => {
       const name = path.relative(config.$render.source.root, file);
       entries[name] = file;

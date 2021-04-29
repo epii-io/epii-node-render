@@ -64,25 +64,7 @@ function isAbsoluteURL(url) {
   return /^(https?:)?\/?\//.test(url);
 }
 
-/**
- * get babel config
- *
- * @return {Object} babel config
- */
-function getBabelConfig() {
-  return {
-    presets: [
-      [
-        resolve('@babel/preset-env'),
-        { exclude: ['@babel/plugin-transform-regenerator'] }
-      ],
-      resolve('@babel/preset-react')
-    ],
-    plugins: [
-      resolve('@babel/plugin-transform-async-to-generator')
-    ]
-  };
-}
+
 
 function hideErrorStack(message) {
   const lines = message.split(/\n\s+at\s+/);
@@ -97,6 +79,5 @@ module.exports = {
   stopWatch,
   isAbsoluteURL,
   toBigBytesUnit,
-  getBabelConfig,
   hideErrorStack,  
 };

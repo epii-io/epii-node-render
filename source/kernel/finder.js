@@ -1,6 +1,6 @@
 const path = require('path');
 const glob = require('glob');
-const logger = require('./kernel/logger');
+const logger = require('./logger');
 
 const CONTEXT = {
   entries: []
@@ -16,9 +16,12 @@ function includeEntry(entry) {
   return !/node_modules/.test(entry);
 }
 
+/**
+ * ???
+ */
 function getRelatedEntries(config, entries) {
   const nextEntries = [];
-  entries.forEach(inputEntry => {
+  entries.forEach((inputEntry) => {
     if (!includeEntry(inputEntry)) return;
     const filterStart = inputEntry.indexOf(config.filter);
     let startDir = '';

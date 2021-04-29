@@ -5,6 +5,7 @@ const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const assist = require('../kernel/assist.js');
+const preset = require('../kernel/preset.js');
 const logger = require('../kernel/logger.js');
 
 const logPrefix = 'view ::';
@@ -17,7 +18,6 @@ const logPrefix = 'view ::';
  * @return {Object} result - webpack config
  */
 function getWebpackConfig(config, context) {
-  const babelConfig = assist.getBabelConfig(context.env);
   const webpackConfig = {
     mode: context.env,
     plugins: [
@@ -31,7 +31,7 @@ function getWebpackConfig(config, context) {
           exclude: [/node_modules/],
           test: /\.jsx$/,
           loader: assist.resolve('babel-loader'),
-          options: babelConfig
+          options: preset.getBabelConfig(context.env),
         },
         {
           exclude: [/node_modules/],

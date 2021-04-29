@@ -4,7 +4,7 @@ const path = require('path');
 const shell = require('shelljs');
 const assist = require('./kernel/assist.js');
 const logger = require('./kernel/logger.js');
-const finder = require('./finder.js');
+const finder = require('./kernel/finder.js');
 const pureRecipe = require('./recipe/pure.js');
 const viewRecipe = require('./recipe/view.js');
 const fileRecipe = require('./recipe/file.js');
@@ -12,7 +12,7 @@ const fileRecipe = require('./recipe/file.js');
 const CONTEXT = {
   env: 'production',
   first: true,
-  entries: []
+  entries: [],
 };
 
 /**
@@ -77,9 +77,6 @@ function lintConfig(config) {
   config.$logger = {
     verbose: process.env.EPII_VERBOSE === 'true'
   };
-  if (config.$logger.verbose && CONTEXT.first) {
-    logger.info(config);
-  }
   return config;
 }
 
@@ -98,6 +95,10 @@ async function buildOnce(config) {
   }
 
   if (CONTEXT.first) {
+    // output config
+    if (config.$logger.verbose) {
+      logger.info(config);
+    }
     // remove target dir
     if (
       !config.expert['skip-clean']
